@@ -13,15 +13,15 @@
 let
   inherit (llvmPackages) stdenv;
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "odin";
-  version = "dev-2024-07";
+  version = "0-unstable-2024-08-05";
 
   src = fetchFromGitHub {
     owner = "odin-lang";
     repo = "Odin";
-    rev = version;
-    hash = "sha256-FeiVTLwgP0x1EZqqiYkGbKALhZWC4xE6a/3PPcEElAc=";
+    rev = "a1c3c38f0453dcf94ba13d572fa392cb5331a878";
+    hash = "sha256-LYUy/llW3BFnRx6sdTF/8QdvK/v+5/ShKJR+ZXocC+4=";
   };
 
   postPatch =
@@ -58,9 +58,7 @@ stdenv.mkDerivation rec {
     cp odin $out/bin/odin
 
     mkdir -p $out/share
-    cp -r base $out/share/base
-    cp -r core $out/share/core
-    cp -r vendor $out/share/vendor
+    cp -r {base,core,vendor,shared} $out/share
 
     wrapProgram $out/bin/odin \
       --prefix PATH : ${

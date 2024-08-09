@@ -2,7 +2,7 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  pynose,
+  nose,
   setuptools,
 }:
 
@@ -22,7 +22,7 @@ buildPythonPackage {
 
   pythonImportsCheck = [ "hkdf" ];
 
-  nativeCheckInputs = [ pynose ];
+  nativeCheckInputs = [ nose ];
 
   checkPhase = ''
     runHook preCheck

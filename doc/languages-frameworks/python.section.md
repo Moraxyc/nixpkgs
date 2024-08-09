@@ -55,13 +55,19 @@ sets are
 * `pkgs.python311Packages`
 * `pkgs.python312Packages`
 * `pkgs.python313Packages`
-* `pkgs.pypyPackages`
+* `pkgs.pypy27Packages`
+* `pkgs.pypy39Packages`
+* `pkgs.pypy310Packages`
 
 and the aliases
 
 * `pkgs.python2Packages` pointing to `pkgs.python27Packages`
-* `pkgs.python3Packages` pointing to `pkgs.python311Packages`
+* `pkgs.python3Packages` pointing to `pkgs.python312Packages`
 * `pkgs.pythonPackages` pointing to `pkgs.python2Packages`
+* `pkgs.pypy2Packages` pointing to `pkgs.pypy27Packages`
+* `pkgs.pypy3Packages` pointing to `pkgs.pypy39Packages`
+* `pkgs.pypyPackages` pointing to `pkgs.pypy2Packages`
+
 
 #### `buildPythonPackage` function {#buildpythonpackage-function}
 
@@ -162,7 +168,8 @@ following are specific to `buildPythonPackage`:
 * `dontWrapPythonPrograms ? false`: Skip wrapping of Python programs.
 * `permitUserSite ? false`: Skip setting the `PYTHONNOUSERSITE` environment
   variable in wrapped programs.
-* `pyproject`: Whether the pyproject format should be used. When set to `true`,
+* `pyproject`: Whether the pyproject format should be used. As all other formats
+  are deprecated, you are recommended to set this to `true`. When you do so,
   `pypaBuildHook` will be used, and you can add the required build dependencies
   from `build-system.requires` to `build-system`. Note that the pyproject
   format falls back to using `setuptools`, so you can use `pyproject = true`
@@ -993,7 +1000,7 @@ buildPythonPackage rec {
   meta = {
     changelog = "https://github.com/blaze/datashape/releases/tag/${version}";
     homepage = "https://github.com/ContinuumIO/datashape";
-    description = "A data description language";
+    description = "Data description language";
     license = lib.licenses.bsd2;
   };
 }
@@ -1118,7 +1125,7 @@ buildPythonPackage rec {
 
   meta = {
     changelog = "https://github.com/pyFFTW/pyFFTW/releases/tag/v${version}";
-    description = "A pythonic wrapper around FFTW, the FFT library, presenting a unified interface for all the supported transforms";
+    description = "Pythonic wrapper around FFTW, the FFT library, presenting a unified interface for all the supported transforms";
     homepage = "http://hgomersall.github.com/pyFFTW";
     license = with lib.licenses; [ bsd2 bsd3 ];
   };
@@ -1315,9 +1322,6 @@ we can do:
 
 ```nix
 {
-  nativeBuildInputs = [
-    pythonRelaxDepsHook
-  ];
   pythonRelaxDeps = [
     "pkg1"
     "pkg3"
@@ -1340,7 +1344,6 @@ example:
 
 ```nix
 {
-  nativeBuildInputs = [ pythonRelaxDepsHook ];
   pythonRelaxDeps = true;
 }
 ```
@@ -1362,8 +1365,15 @@ instead of a dev dependency).
 Keep in mind that while the examples above are done with `requirements.txt`,
 `pythonRelaxDepsHook` works by modifying the resulting wheel file, so it should
 work with any of the [existing hooks](#setup-hooks).
-It indicates that `pythonRelaxDepsHook` has no effect on build time dependencies, such as in `build-system`.
-If a package requires incompatible build time dependencies, they should be removed in `postPatch` with `substituteInPlace` or something similar.
+
+The `pythonRelaxDepsHook` has no effect on build time dependencies, such as
+those specified in `build-system`. If a package requires incompatible build
+time dependencies, they should be removed in `postPatch` through
+`substituteInPlace` or similar.
+
+For ease of use, both `buildPythonPackage` and `buildPythonApplication` will
+automatically add `pythonRelaxDepsHook` if either `pythonRelaxDeps` or
+`pythonRemoveDeps` is specified.
 
 #### Using unittestCheckHook {#using-unittestcheckhook}
 

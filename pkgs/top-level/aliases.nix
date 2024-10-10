@@ -95,7 +95,6 @@ mapAliases {
   aeon = throw "aeon has been removed from nixpkgs, as it was broken and unmaintained"; # Added 2024-07-15
   afl = throw "afl has been removed as the upstream project was archived. Consider using 'aflplusplus'"; # Added 2024-04-21
   agda-pkg = throw "agda-pkg has been removed due to being unmaintained"; # Added 2024-09-10"
-  agebox = throw "agebox has been removed due to lack of upstream maintenance"; # Added 2024-07-13
   airfield = throw "airfield has been removed due to being unmaintained"; # Added 2023-05-19
   alertmanager-bot = throw "alertmanager-bot is broken and has been archived by upstream"; # Added 2023-07-28
   alsa-project = throw "alsa-project was removed and its sub-attributes were promoted to top-level."; # Added 2023-11-12
@@ -231,6 +230,17 @@ mapAliases {
   ccloud-cli = throw "ccloud-cli has been removed, please use confluent-cli instead"; # Added 2023-06-09
   certmgr-selfsigned = certmgr; # Added 2023-11-30
   challenger = taler-challenger; # Added 2024-09-04
+  check_smartmon = throw "'check_smartmon' has been renamed to 'nagiosPlugins.check_smartmon'"; # Added 2024-05-03
+  check_systemd = throw "'check_systemd' has been renamed to 'nagiosPlugins.check_systemd'"; # Added 2024-05-03
+  check_zfs = throw "'check_zfs' has been renamed to 'nagiosPlugins.check_zfs'"; # Added 2024-05-03
+  check-esxi-hardware = throw "'check-esxi-hardware' has been renamed to 'nagiosPlugins.check_esxi_hardware'"; # Added 2024-05-03
+  check-mssql-health = throw "'check-mssql-health' has been renamed to 'nagiosPlugins.check_mssql_health'"; # Added 2024-05-03
+  check-nwc-health = throw "'check-nwc-health' has been renamed to 'nagiosPlugins.check_nwc_health'"; # Added 2024-05-03
+  check-openvpn = throw "'check-openvpn' has been renamed to 'nagiosPlugins.check_openvpn'"; # Added 2024-05-03
+  check-ups-health = throw "'check-ups-health' has been renamed to 'nagiosPlugins.check_ups_health'"; # Added 2024-05-03
+  check-uptime = throw "'check-uptime' has been renamed to 'nagiosPlugins.check_uptime'"; # Added 2024-05-03
+  check-wmiplus = throw "'check-wmiplus' has been renamed to 'nagiosPlugins.check_wmi_plus'"; # Added 2024-05-03
+  checkSSLCert = throw "'checkSSLCert' has been renamed to 'nagiosPlugins.check_ssl_cert'"; # Added 2024-05-03
   chefdk = throw "chefdk has been removed due to being deprecated upstream by Chef Workstation"; # Added 2023-03-22
   chia = throw "chia has been removed. see https://github.com/NixOS/nixpkgs/pull/270254"; # Added 2023-11-30
   chia-dev-tools = throw "chia-dev-tools has been removed. see https://github.com/NixOS/nixpkgs/pull/270254"; # Added 2023-11-30
@@ -298,6 +308,7 @@ mapAliases {
   clang16Stdenv = lowPrio llvmPackages_16.stdenv;
   clang17Stdenv = lowPrio llvmPackages_17.stdenv;
   clang18Stdenv = lowPrio llvmPackages_18.stdenv;
+  clang19Stdenv = lowPrio llvmPackages_19.stdenv;
 
   clang-tools_6 = throw "clang-tools_6 has been removed from nixpkgs"; # Added 2024-01-08
   clang-tools_7 = throw "clang-tools_7 has been removed from nixpkgs"; # Added 2023-11-19
@@ -319,6 +330,7 @@ mapAliases {
   clang-tools_16 = llvmPackages_16.clang-tools; # Added 2024-04-22
   clang-tools_17 = llvmPackages_17.clang-tools; # Added 2024-04-22
   clang-tools_18 = llvmPackages_18.clang-tools; # Added 2024-04-22
+  clang-tools_19 = llvmPackages_19.clang-tools; # Added 2024-08-21
 
   cq-editor = throw "cq-editor has been removed, as it use a dependency that was disabled since python 3.8 and was last updated in 2021"; # Added 2024-05-13
 
@@ -342,6 +354,7 @@ mapAliases {
   dgsh = throw "'dgsh' has been removed, as it was broken and unmaintained"; # added 2024-05-09
   dhcp = throw "dhcp (ISC DHCP) has been removed from nixpkgs, because it reached its end of life"; # Added 2023-04-04
   dibbler = throw "dibbler was removed because it is not maintained anymore"; # Added 2024-05-14
+  dillong = throw "'dillong' has been removed, as upstream is abandoned since 2021-12-13. Use either 'dillo' or 'dillo-plus'. The latter integrates features from dillong."; # Added 2024-10-07
   dnnl = oneDNN; # Added 2020-04-22
   dnscrypt-wrapper = throw "dnscrypt-wrapper was removed because it has been effectively unmaintained since 2018. Use DNSCcrypt support in dnsdist instead"; # Added 2024-09-14
   docker-compose_1 = throw "'docker-compose_1' has been removed because it has been unmaintained since May 2021. Use docker-compose instead."; # Added 2024-07-29
@@ -486,6 +499,10 @@ mapAliases {
   flintqs = throw "FlintQS has been removed due to lack of maintenance and security issues; use SageMath or FLINT instead"; # Added 2024-03-21
   flutter2 = throw "flutter2 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2023-07-03
   flutter37 = throw "flutter37 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2023-07-03
+  flutter313 = throw "flutter313 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2024-10-05
+  flutter316 = throw "flutter316 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2024-10-05
+  flutter322 = throw "flutter322 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2024-10-05
+  flutter323 = throw "flutter323 has been removed because it isn't updated anymore, and no packages in nixpkgs use it. If you still need it, use flutter.mkFlutter to get a custom version"; # Added 2024-10-05
   foldingathome = fahclient; # Added 2020-09-03
   forgejo-actions-runner = forgejo-runner; # Added 2024-04-04
 
@@ -714,6 +731,7 @@ mapAliases {
   imagemagick7 = imagemagick; # Added 2021-02-22
   imagemagick7_light = imagemagick_light; # Added 2021-02-22
   imlib = throw "imlib has been dropped due to the lack of maintenance from upstream since 2004"; # Added 2023-01-04
+  immersed-vr = lib.warn "'immersed-vr' has been renamed to 'immersed'" immersed; # Added 2024-08-11
   indiepass-desktop = throw "indiepass-desktop has been dropped because it does not work with recent Electron versions"; # Added 2024-03-14
   indigenous-desktop = throw "'indigenous-desktop' has been renamed to/replaced by 'indiepass-desktop'"; # Added 2023-11-08
   input-utils = throw "The input-utils package was dropped since it was unmaintained."; # Added 2024-06-21
@@ -813,7 +831,6 @@ mapAliases {
   libbpf_1 = libbpf; # Added 2022-12-06
   libbson = mongoc; # Added 2024-03-11
   libcap_pam = throw "'libcap_pam' has been replaced with 'libcap'"; # Converted to throw 2023-09-10
-  libclc = llvmPackages_18.libclc; # Added 2023-10-28
   libcxxabi = throw "'libcxxabi' was merged into 'libcxx'"; # Converted to throw 2024-03-08
   libdwarf_20210528 = throw "'libdwarf_20210528' has been removed because it is not used in nixpkgs, move to libdwarf"; # Added 2024-03-23
   libgme = game-music-emu; # Added 2022-07-20
@@ -1036,6 +1053,7 @@ mapAliases {
   mongodb-4_0 = throw "mongodb-4_0 has been removed, it's end of life since April 2022"; # Added 2023-01-05
   mongodb-4_2 = throw "mongodb-4_2 has been removed, it's end of life since April 2023"; # Added 2023-06-06
   mongodb-4_4 = throw "mongodb-4_4 has been removed, it's end of life since April 2024"; # Added 2024-04-11
+  mongodb-5_0 = throw "mongodb-5_0 has been removed, it's end of life since October 2024"; # Added 2024-10-01
   moonlander = throw "'moonlander' has been removed due to it being broken and unmaintained"; # Added 2023-11-26
   moz-phab = mozphab; # Added 2022-08-09
   mozart-binary = throw "'mozart-binary' has been renamed to/replaced by 'mozart2-binary'"; # Converted to throw 2023-09-10
@@ -1172,6 +1190,7 @@ mapAliases {
   openjdk20_headless = openjdk20; # Added 2024-08-01
   jdk20 = openjdk20; # Added 2024-08-01
   jdk20_headless = openjdk20; # Added 2024-08-01
+  openjfx11 = throw "OpenJFX 11 was removed as it has reached its end of life"; # Added 2024-10-07
   openjfx19 = throw "OpenJFX 19 was removed as it has reached its end of life"; # Added 2024-08-01
   openjfx20 = throw "OpenJFX 20 was removed as it has reached its end of life"; # Added 2024-08-01
   openjpeg_2 = openjpeg; # Added 2021-01-25
@@ -1238,6 +1257,7 @@ mapAliases {
   pipewire_0_2 = throw "pipewire_0_2 has been removed as it is outdated and no longer used"; # Added 2024-07-28
   pipewire-media-session = throw "pipewire-media-session is no longer maintained and has been removed. Please use Wireplumber instead.";
   pkgconfig = throw "'pkgconfig' has been renamed to/replaced by 'pkg-config'"; # Converted to throw 2023-09-10
+  playwright = lib.warn "'playwright' will reference playwright-driver in 25.05. Reference 'python3Packages.playwright' for the python test launcher" python3Packages.toPythonApplication python3Packages.playwright; # Added 2024-10-04
   pleroma-otp = pleroma; # Added 2021-07-10
   pltScheme = racket; # just to be sure
   pmdk = throw "'pmdk' is discontinued, no further support or maintenance is planned by upstream"; # Added 2023-02-06
@@ -1606,8 +1626,10 @@ mapAliases {
   unicorn-emu = unicorn; # Added 2020-10-29
   uniffi-bindgen = throw "uniffi-bindgen has been removed since upstream no longer provides a standalone package for the CLI";
   unifi-poller = unpoller; # Added 2022-11-24
+  unifi-video = throw "unifi-video has been removed as it has been unsupported upstream since 2021"; # Added 2024-10-01
   unifi5 = throw "'unifi5' has been removed since its required MongoDB version is EOL."; # Added 2024-04-11
   unifi6 = throw "'unifi6' has been removed since its required MongoDB version is EOL."; # Added 2024-04-11
+  unifi7 = throw "'unifi7' has been removed since it is vulnerable to CVE-2024-42025 and its required MongoDB version is EOL."; # Added 2024-10-01
   unifiLTS = throw "'unifiLTS' has been removed since UniFi no longer has LTS and stable releases. Use `pkgs.unifi` instead."; # Added 2024-04-11
   unifiStable = throw "'unifiStable' has been removed since UniFi no longer has LTS and stable releases. Use `pkgs.unifi` instead."; # Converted to throw 2024-04-11
   untrunc = untrunc-anthwlock; # Added 2021-02-01
@@ -1702,6 +1724,12 @@ mapAliases {
   xcodebuild6 = throw "'xcodebuild6' has been renamed to/replaced by 'xcodebuild'"; # Added 2023-12-10
   xdg_utils = xdg-utils; # Added 2021-02-01
   xen-light = throw "'xen-light' has been renamed to/replaced by 'xen-slim'"; # Added 2024-06-30
+  xen-slim = throw "'xen-slim' has been renamed to 'xen'. The old Xen package with built-in components no longer exists"; # Added 2024-10-05
+  xen_4_16 = throw "While Xen 4.16 was still security-supported when it was removed from Nixpkgs, it would have reached its End of Life a couple of days after NixOS 24.11 released. To avoid shipping an insecure version of Xen, the Xen Project Hypervisor Maintenance Team decided to delete the derivation entirely"; # Added 2024-10-05
+  xen_4_17 = throw "Due to technical challenges involving building older versions of Xen with newer dependencies, the Xen Project Hypervisor Maintenance Team decided to switch to a latest-only support cycle. As Xen 4.17 would have been the 'n-2' version, it was removed"; # Added 2024-10-05
+  xen_4_18 = throw "Due to technical challenges involving building older versions of Xen with newer dependencies, the Xen Project Hypervisor Maintenance Team decided to switch to a latest-only support cycle. As Xen 4.18 would have been the 'n-1' version, it was removed"; # Added 2024-10-05
+  xen_4_19 = throw "Use 'xen' instead"; # Added 2024-10-05
+  xenPackages = throw "The attributes in the xenPackages set have been promoted to the top-level. (xenPackages.xen_4_19 -> xen)";
   xineLib = xine-lib; # Added 2021-04-27
   xineUI = xine-ui; # Added 2021-04-27
   xmlada = gnatPackages.xmlada; # Added 2024-02-25

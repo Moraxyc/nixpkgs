@@ -3816,6 +3816,13 @@
     githubId = 98980;
     name = "Chmouel Boudjnah";
   };
+  chn = {
+    name = "Haonan Chen";
+    email = "chn@chn.moe";
+    matrix = "@chn:chn.moe";
+    github = "CHN-beta";
+    githubId = 35858462;
+  };
   choochootrain = {
     email = "hurshal@imap.cc";
     github = "choochootrain";
@@ -5841,6 +5848,12 @@
     githubId = 6872940;
     name = "Dennis Værum";
   };
+  dvcorreia = {
+    email = "dv_correia@hotmail.com";
+    name = "Diogo Correia";
+    github = "dvcorreia";
+    githubId = 20357938;
+  };
   dvn0 = {
     email = "git@dvn.me";
     github = "dvn0";
@@ -7595,6 +7608,12 @@
     githubId = 91987;
     name = "Jim Garrison";
   };
+  garyguo = {
+    email = "gary@garyguo.net";
+    github = "nbdd0121";
+    githubId = 4065244;
+    name = "Gary Guo";
+  };
   gavin = {
     email = "gavin.rogers@holo.host";
     github = "gavinrogers";
@@ -8387,6 +8406,13 @@
     github = "haslersn";
     githubId = 33969028;
     name = "Sebastian Hasler";
+  };
+  hasnep = {
+    name = "Hannes";
+    email = "h@nnes.dev";
+    matrix = "@hasnep:matrix.org";
+    github = "Hasnep";
+    githubId = 25184102;
   };
   hausken = {
     name = "Hausken";
@@ -18689,6 +18715,12 @@
     githubId = 141248;
     name = "Ramses";
   };
+  rvfg = {
+    email = "i@rvf6.com";
+    github = "duament";
+    githubId = 30264485;
+    name = "Rvfg";
+  };
   rvl = {
     email = "dev+nix@rodney.id.au";
     github = "rvl";
@@ -22645,6 +22677,13 @@
     github = "vonixxx";
     githubId = 144771550;
     name = "Luca Uricariu";
+  };
+  voronind = {
+    email = "hi@voronind.com";
+    name = "Dmitry Voronin";
+    github = "voronind-com";
+    githubId = 22127600;
+    keys = [ { fingerprint = "3241 FDAD 82A7 E22D 4279  F405 913F 3267 9278 2E1C"; } ];
   };
   votava = {
     email = "votava@gmail.com";

@@ -1902,8 +1902,6 @@ self: super: with self; {
 
   bugz = callPackage ../development/python-modules/bugz { };
 
-  bugzilla = callPackage ../development/python-modules/bugzilla { };
-
   buienradar = callPackage ../development/python-modules/buienradar { };
 
   build = callPackage ../development/python-modules/build { };
@@ -2513,6 +2511,8 @@ self: super: with self; {
   concurrent-log-handler = callPackage ../development/python-modules/concurrent-log-handler { };
 
   conda = callPackage ../development/python-modules/conda { };
+
+  conda-inject = callPackage ../development/python-modules/conda-inject { };
 
   conda-libmamba-solver = callPackage ../development/python-modules/conda-libmamba-solver { };
 
@@ -9027,8 +9027,6 @@ self: super: with self; {
 
   normality = callPackage ../development/python-modules/normality { };
 
-  nose = callPackage ../development/python-modules/nose { };
-
   nose2 = callPackage ../development/python-modules/nose2 { };
 
   nose2pytest = callPackage ../development/python-modules/nose2pytest { };
@@ -9134,6 +9132,8 @@ self: super: with self; {
   nxt-python = callPackage ../development/python-modules/nxt-python { };
 
   plugp100 = callPackage ../development/python-modules/plugp100 {};
+
+  python-bugzilla = callPackage ../development/python-modules/python-bugzilla { };
 
   python-hcl2 = callPackage ../development/python-modules/python-hcl2 { };
 
@@ -9284,7 +9284,9 @@ self: super: with self; {
 
   onlykey-solo-python = callPackage ../development/python-modules/onlykey-solo-python { };
 
-  onnx = callPackage ../development/python-modules/onnx { };
+  onnx = callPackage ../development/python-modules/onnx {
+    protobuf-core = pkgs.protobuf;
+  };
 
   onnxconverter-common = callPackage ../development/python-modules/onnxconverter-common {
     inherit (pkgs) protobuf;
@@ -14536,7 +14538,7 @@ self: super: with self; {
   });
 
   snakemake = toPythonModule (pkgs.snakemake.override {
-    python3 = python;
+    python3Packages = self;
   });
 
   snakemake-executor-plugin-cluster-generic = callPackage ../development/python-modules/snakemake-executor-plugin-cluster-generic { };
@@ -15755,10 +15757,10 @@ self: super: with self; {
 
   toposort = callPackage ../development/python-modules/toposort { };
 
-  torch = callPackage ../development/python-modules/torch {
-    inherit (pkgs.darwin.apple_sdk.frameworks) Accelerate CoreServices;
-    inherit (pkgs.darwin) libobjc;
-  };
+  torch = callPackage ../development/python-modules/torch { };
+
+  # Required to test triton
+  torch-no-triton = self.torch.override { tritonSupport = false; };
 
   torch-audiomentations = callPackage ../development/python-modules/torch-audiomentations { };
 

@@ -499,7 +499,6 @@ with lib.maintainers;
       ryantm
       lassulus
       yayayayaka
-      asymmetric
     ];
     scope = "Maintain Jitsi.";
     shortName = "Jitsi";
@@ -749,6 +748,16 @@ with lib.maintainers;
     enableFeatureFreezePing = true;
   };
 
+  ngi = {
+    members = [
+      eljamm
+      fricklerhandwerk
+      wegank
+    ];
+    scope = "Maintain NGI-supported software.";
+    shortName = "NGI";
+  };
+
   node = {
     members = [ winter ];
     scope = "Maintain Node.js runtimes and build tooling.";
@@ -952,6 +961,21 @@ with lib.maintainers;
     members = [ balsoft ];
     scope = "Group registration for Serokell employees who collectively maintain packages.";
     shortName = "Serokell employees";
+  };
+
+  stdenv = {
+    members = [
+      artturin
+      emily
+      ericson2314
+      philiptaron
+      reckenrode
+      RossComputerGuy
+    ];
+    scope = "Maintain the standard environment and its surrounding logic.";
+    shortName = "stdenv";
+    enableFeatureFreezePing = true;
+    githubTeams = [ "stdenv" ];
   };
 
   steam = {

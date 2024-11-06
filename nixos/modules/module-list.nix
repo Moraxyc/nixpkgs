@@ -724,6 +724,7 @@
   ./services/misc/autofs.nix
   ./services/misc/autorandr.nix
   ./services/misc/autosuspend.nix
+  ./services/misc/bark-server.nix
   ./services/misc/bazarr.nix
   ./services/misc/bcg.nix
   ./services/misc/beanstalkd.nix

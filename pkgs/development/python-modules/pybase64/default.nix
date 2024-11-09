@@ -1,7 +1,7 @@
 {
   lib,
   buildPythonPackage,
-  fetchPypi,
+  fetchFromGitHub,
   pytestCheckHook,
   pythonOlder,
 }:
@@ -13,9 +13,12 @@ buildPythonPackage rec {
 
   disabled = pythonOlder "3.6";
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-cU8CHD6qKHwQl87Wjy30xbLs0lBFUcLnHIQ/VDZaygM=";
+  src = fetchFromGitHub {
+    owner = "mayeut";
+    repo = "pybase64";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-Yl0P9Ygy6IirjSFrutl+fmn4BnUL1nXzbQgADNQFg3I=";
+    fetchSubmodules = true;
   };
 
   nativeCheckInputs = [ pytestCheckHook ];

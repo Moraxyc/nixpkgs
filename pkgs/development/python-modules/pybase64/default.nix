@@ -2,6 +2,7 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
+  setuptools,
   pytestCheckHook,
   pythonOlder,
 }:
@@ -9,7 +10,7 @@
 buildPythonPackage rec {
   pname = "pybase64";
   version = "1.4.0";
-  format = "setuptools";
+  pyproject = true;
 
   disabled = pythonOlder "3.6";
 
@@ -21,16 +22,18 @@ buildPythonPackage rec {
     fetchSubmodules = true;
   };
 
+  build-system = [ setuptools ];
+
   nativeCheckInputs = [ pytestCheckHook ];
 
   pythonImportsCheck = [ "pybase64" ];
 
-  meta = with lib; {
+  meta = {
     description = "Fast Base64 encoding/decoding";
     mainProgram = "pybase64";
     homepage = "https://github.com/mayeut/pybase64";
     changelog = "https://github.com/mayeut/pybase64/releases/tag/v${version}";
-    license = licenses.bsd2;
+    license = lib.licenses.bsd2;
     maintainers = [ ];
   };
 }

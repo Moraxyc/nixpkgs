@@ -7,13 +7,13 @@
 
 buildNpmPackage rec {
   pname = "nezha-theme-admin";
-  version = "1.2.0";
+  version = "1.4.0";
 
   src = fetchFromGitHub {
     owner = "nezhahq";
     repo = "admin-frontend";
     tag = "v${version}";
-    hash = "sha256-BnpcCkI6lIno5W3ZemQQf1UVa6bpwmIJ5KXg6BQ5Ur0=";
+    hash = "sha256-8PVUBMjdcpAkOr4dYlaSiCAjB6g4J8mWhzb8BxdC734=";
   };
 
   # TODO: Switch to the bun build function once available in nixpkgs

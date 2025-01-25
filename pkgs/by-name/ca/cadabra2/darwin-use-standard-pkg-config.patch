@@ -1,0 +1,19 @@
+diff --git a/cmake/modules/FindGLIBMM3.cmake b/cmake/modules/FindGLIBMM3.cmake
+index a3216db..a48002b 100644
+--- a/cmake/modules/FindGLIBMM3.cmake
++++ b/cmake/modules/FindGLIBMM3.cmake
+@@ -5,14 +5,6 @@ if(WIN33)
+   endif()
+ else()
+   find_package(PkgConfig REQUIRED)
+-  if(MACOS)
+-    execute_process(COMMAND brew --prefix glibmm@2.64  OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE GLIBMM_PREFIX)
+-    execute_process(COMMAND brew --prefix cairomm@1.14 OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE CAIROMM_PREFIX)
+-    execute_process(COMMAND brew --prefix pangomm@2.42 OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE PANGOMM_PREFIX)
+-    execute_process(COMMAND brew --prefix atkmm@2.28   OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE ATKMM_PREFIX)
+-    set( ENV{PKG_CONFIG_PATH} "${GLIBMM_PREFIX}/lib/pkgconfig:${CAIROMM_PREFIX}/lib/pkgconfig:${PANGOMM_PREFIX}/lib/pkgconfig:${ATKMM_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}" )
+-    message(STATUS "Using PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
+-  endif()
+   pkg_check_modules(GLIBMM REQUIRED glibmm-2.4)
+   include_directories(${GLIBMM_INCLUDE_DIRS})
+   link_directories(${GLIBMM_LIBRARY_DIRS})

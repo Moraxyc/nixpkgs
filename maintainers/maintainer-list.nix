@@ -3577,6 +3577,17 @@
     githubId = 382011;
     name = "c4605";
   };
+  c4thebomb = {
+    name = "Ceferino Patino";
+    email = "c4patino@gmail.com";
+    github = "c4thebomb";
+    githubId = 79673111;
+    keys = [
+      {
+        fingerprint = "EA60 D516 A926 7532 369D  3E67 E161 DF22 9EC1 280E";
+      }
+    ];
+  };
   caarlos0 = {
     name = "Carlos A Becker";
     email = "carlos@becker.software";
@@ -9711,6 +9722,12 @@
     githubId = 3661115;
     name = "Ingo Blechschmidt";
   };
+  icedborn = {
+    email = "github.envenomed@dralias.com";
+    github = "icedborn";
+    githubId = 51162078;
+    name = "IceDBorn";
+  };
   icewind1991 = {
     name = "Robin Appelman";
     email = "robin@icewind.nl";
@@ -11356,6 +11373,12 @@
     github = "josephsurin";
     githubId = 14977484;
   };
+  joshainglis = {
+    name = "Josha Inglis";
+    email = "joshainglis@gmail.com";
+    github = "joshainglis";
+    githubId = 1281131;
+  };
   joshniemela = {
     name = "Joshua Niemelä";
     email = "josh@jniemela.dk";
@@ -11613,6 +11636,11 @@
     github = "JulienMalka";
     githubId = 1792886;
     name = "Julien Malka";
+  };
+  juliusfreudenberger = {
+    name = "Julius Freudenberger";
+    github = "JuliusFreudenberger";
+    githubId = 13383409;
   };
   juliusrickert = {
     email = "nixpkgs@juliusrickert.de";
@@ -17034,6 +17062,12 @@
     github = "obsidian-systems-maintenance";
     githubId = 80847921;
   };
+  obsoleszenz = {
+    name = "obsoleszenz";
+    email = "obsoleszenz@riseup.net";
+    github = "obsoleszenz";
+    githubId = 94946669;
+  };
   ocfox = {
     email = "i@ocfox.me";
     github = "ocfox";
@@ -21245,6 +21279,12 @@
     github = "ein-shved";
     githubId = 3513222;
   };
+  ShyAssassin = {
+    name = "[Assassin]";
+    githubId = 49711232;
+    github = "ShyAssassin";
+    email = "ShyAssassin@assassin.dev";
+  };
   shyim = {
     email = "s.sayakci@gmail.com";
     github = "shyim";
@@ -23177,6 +23217,12 @@
     github = "Thra11";
     githubId = 1391883;
     name = "Tom Hall";
+  };
+  three = {
+    email = "eric@ericroberts.dev";
+    github = "three";
+    githubId = 1761259;
+    name = "Eric Roberts";
   };
   thtrf = {
     email = "thtrf@proton.me";

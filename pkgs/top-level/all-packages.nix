@@ -514,6 +514,7 @@ with pkgs;
     antlr = antlr4_10;
     icu =  icu73;
     protobuf = protobuf_24;
+    stdenv = if stdenv.hostPlatform.isDarwin then llvmPackages_18.stdenv else stdenv;
   };
 
   fetchpatch = callPackage ../build-support/fetchpatch {
@@ -1668,9 +1669,9 @@ with pkgs;
   #     pkgsCross.aarch64-multiplatform.freshBootstrapTools.build
   freshBootstrapTools = if stdenv.hostPlatform.isDarwin then
     callPackage ../stdenv/darwin/make-bootstrap-tools.nix {
-      localSystem = stdenv.buildPlatform;
+      localSystem = { config = lib.systems.parse.tripleFromSystem stdenv.buildPlatform; };
       crossSystem =
-        if stdenv.buildPlatform == stdenv.hostPlatform then null else stdenv.hostPlatform;
+        if stdenv.buildPlatform == stdenv.hostPlatform then null else { config = lib.systems.parse.tripleFromSystem stdenv.hostPlatform; };
     }
   else if stdenv.hostPlatform.isLinux then
     callPackage ../stdenv/linux/make-bootstrap-tools.nix {}
@@ -4350,9 +4351,6 @@ with pkgs;
 
   inherit (callPackages ../applications/networking/cluster/nomad { })
     nomad
-    nomad_1_4
-    nomad_1_5
-    nomad_1_6
     nomad_1_7
     nomad_1_8
     nomad_1_9
@@ -4740,10 +4738,6 @@ with pkgs;
 
   podman-desktop = callPackage ../applications/virtualization/podman-desktop {
     inherit (darwin) autoSignDarwinBinariesHook;
-  };
-
-  poedit = callPackage ../tools/text/poedit {
-    wxGTK32 = wxGTK32.override { withWebKit = true; };
   };
 
   polaris = callPackage ../servers/polaris { };
@@ -6381,8 +6375,6 @@ with pkgs;
     withQt = true;
   };
 
-  lessc = nodePackages.less;
-
   lobster = callPackage ../development/compilers/lobster {
     inherit (darwin.apple_sdk.frameworks)
       CoreFoundation Cocoa AudioToolbox OpenGL Foundation ForceFeedback;
@@ -7537,6 +7529,7 @@ with pkgs;
     electron_31-bin
     electron_32-bin
     electron_33-bin
+    electron_34-bin
     ;
 
   inherit (callPackages ../development/tools/electron/chromedriver { })
@@ -7545,6 +7538,7 @@ with pkgs;
     electron-chromedriver_31
     electron-chromedriver_32
     electron-chromedriver_33
+    electron-chromedriver_34
     ;
 
   electron_24 = electron_24-bin;
@@ -7555,9 +7549,10 @@ with pkgs;
   electron_31 = electron_31-bin;
   electron_32 = if lib.meta.availableOn stdenv.hostPlatform electron-source.electron_32 then electron-source.electron_32 else electron_32-bin;
   electron_33 = if lib.meta.availableOn stdenv.hostPlatform electron-source.electron_33 then electron-source.electron_33 else electron_33-bin;
-  electron = electron_33;
-  electron-bin = electron_33-bin;
-  electron-chromedriver = electron-chromedriver_33;
+  electron_34 = electron_34-bin;
+  electron = electron_34;
+  electron-bin = electron_34-bin;
+  electron-chromedriver = electron-chromedriver_34;
 
   autoconf = callPackage ../development/tools/misc/autoconf { };
   autoconf213 = callPackage ../development/tools/misc/autoconf/2.13.nix { };
@@ -15576,8 +15571,6 @@ with pkgs;
     onlyLibVLC = true;
   };
 
-  vmpk = libsForQt5.callPackage ../applications/audio/vmpk { };
-
   vmware-horizon-client = callPackage ../applications/networking/remote/vmware-horizon-client { };
 
   vorbis-tools = callPackage ../applications/audio/vorbis-tools {
@@ -16306,10 +16299,6 @@ with pkgs;
   iortcw = callPackage ../games/iortcw { };
   # used as base package for iortcw forks
   iortcw_sp = callPackage ../games/iortcw/sp.nix { };
-
-  ja2-stracciatella = callPackage ../games/ja2-stracciatella {
-    inherit (darwin.apple_sdk.frameworks) Carbon Cocoa;
-  };
 
   katagoWithCuda = katago.override {
     backend = "cuda";
@@ -17244,8 +17233,6 @@ with pkgs;
 
   degate = libsForQt5.callPackage ../applications/science/electronics/degate { };
 
-  flatcam = python39.pkgs.callPackage ../applications/science/electronics/flatcam { };
-
   geda = callPackage ../applications/science/electronics/geda {
     guile = guile_2_2;
   };
@@ -17363,10 +17350,6 @@ with pkgs;
 
   cytoscape = callPackage ../applications/science/misc/cytoscape {
     jre = openjdk17;
-  };
-
-  faiss = callPackage ../development/libraries/science/math/faiss {
-    pythonPackages = python3Packages;
   };
 
   faissWithCuda = faiss.override {
@@ -17738,7 +17721,7 @@ with pkgs;
                 [(
                   { lib, ... }: {
                     config.nixpkgs.pkgs = lib.mkDefault pkgs;
-                    config.nixpkgs.localSystem = lib.mkDefault stdenv.hostPlatform;
+                    config.nixpkgs.localSystem = lib.mkDefault ({ config = lib.systems.parse.tripleFromSystem stdenv.hostPlatform; });
                   }
                 )] ++ (
                   if builtins.isList configuration
@@ -17816,7 +17799,7 @@ with pkgs;
 
   nix-visualize = python3.pkgs.callPackage ../tools/package-management/nix-visualize { };
 
-  nixci = callPackage ../tools/nix/nixci {
+  nixci = callPackage ../by-name/ni/nixci/package.nix {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration IOKit;
   };
 

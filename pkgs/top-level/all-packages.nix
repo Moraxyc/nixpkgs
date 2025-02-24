@@ -1058,6 +1058,8 @@ with pkgs;
 
   pricehist = python3Packages.callPackage ../tools/misc/pricehist { };
 
+  py7zr = with python3Packages; toPythonApplication py7zr;
+
   q = callPackage ../tools/networking/q { };
 
   qFlipper = libsForQt5.callPackage ../tools/misc/qflipper { };
@@ -2966,6 +2968,7 @@ with pkgs;
   cudaPackages_12_3 = callPackage ./cuda-packages.nix { cudaVersion = "12.3"; };
   cudaPackages_12_4 = callPackage ./cuda-packages.nix { cudaVersion = "12.4"; };
   cudaPackages_12_6 = callPackage ./cuda-packages.nix { cudaVersion = "12.6"; };
+  cudaPackages_12_8 = callPackage ./cuda-packages.nix { cudaVersion = "12.8"; };
   cudaPackages_12 = cudaPackages_12_4; # Latest supported by cudnn
 
   cudaPackages = recurseIntoAttrs cudaPackages_12;
@@ -8551,10 +8554,8 @@ with pkgs;
   celt_0_7 = callPackage ../development/libraries/celt/0.7.nix { };
   celt_0_5_1 = callPackage ../development/libraries/celt/0.5.1.nix { };
 
-  certbot = python3.pkgs.toPythonApplication python3.pkgs.certbot;
-
   certbot-full = certbot.withPlugins (cp: with cp; [
-    certbot-dns-cloudflare
+    # FIXME unbreak certbot-dns-cloudflare
     certbot-dns-google
     certbot-dns-ovh
     certbot-dns-rfc2136

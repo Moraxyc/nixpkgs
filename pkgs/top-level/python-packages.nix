@@ -998,6 +998,8 @@ self: super: with self; {
 
   atomman = callPackage ../development/python-modules/atomman { };
 
+  atproto = callPackage ../development/python-modules/atproto { };
+
   atpublic = callPackage ../development/python-modules/atpublic { };
 
   atsim-potentials = callPackage ../development/python-modules/atsim-potentials { };
@@ -4488,6 +4490,8 @@ self: super: with self; {
 
   factory-boy = callPackage ../development/python-modules/factory-boy { };
 
+  faicons = callPackage ../development/python-modules/faicons { };
+
   fairscale = callPackage ../development/python-modules/fairscale { };
 
   fairseq = callPackage ../development/python-modules/fairseq { };
@@ -5351,6 +5355,8 @@ self: super: with self; {
   github-webhook = callPackage ../development/python-modules/github-webhook { };
 
   github3-py = callPackage ../development/python-modules/github3-py { };
+
+  gitingest = callPackage ../development/python-modules/gitingest { };
 
   gitignore-parser = callPackage ../development/python-modules/gitignore-parser { };
 
@@ -6392,6 +6398,8 @@ self: super: with self; {
 
   infinity = callPackage ../development/python-modules/infinity { };
 
+  inflate64 = callPackage ../development/python-modules/inflate64 { };
+
   inflect = callPackage ../development/python-modules/inflect { };
 
   inflection = callPackage ../development/python-modules/inflection { };
@@ -7401,6 +7409,8 @@ self: super: with self; {
     inherit python;
   })).python;
 
+  libipld = callPackage ../development/python-modules/libipld { };
+
   libkeepass = callPackage ../development/python-modules/libkeepass { };
 
   libknot = callPackage ../development/python-modules/libknot { };
@@ -8133,6 +8143,7 @@ self: super: with self; {
   mdformat-gfm = callPackage ../development/python-modules/mdformat-gfm { };
   mdformat-gfm-alerts = callPackage ../development/python-modules/mdformat-gfm-alerts { };
   mdformat-mkdocs = callPackage ../development/python-modules/mdformat-mkdocs { };
+  mdformat-myst = callPackage ../development/python-modules/mdformat-myst{ };
   mdformat-nix-alejandra = callPackage ../development/python-modules/mdformat-nix-alejandra { };
   mdformat-simple-breaks = callPackage ../development/python-modules/mdformat-simple-breaks { };
   mdformat-tables = callPackage ../development/python-modules/mdformat-tables { };
@@ -8696,6 +8707,8 @@ self: super: with self; {
   multiset = callPackage ../development/python-modules/multiset { };
 
   multitasking = callPackage ../development/python-modules/multitasking { };
+
+  multivolumefile = callPackage ../development/python-modules/multivolumefile { };
 
   munch = callPackage ../development/python-modules/munch { };
 
@@ -10131,6 +10144,8 @@ self: super: with self; {
 
   pandas-datareader = callPackage ../development/python-modules/pandas-datareader { };
 
+  pandas-ta = callPackage ../development/python-modules/pandas-ta { };
+
   pandera = callPackage ../development/python-modules/pandera { };
 
   pandoc-attributes = callPackage ../development/python-modules/pandoc-attributes { };
@@ -10707,6 +10722,8 @@ self: super: with self; {
 
   py65 = callPackage ../development/python-modules/py65 { };
 
+  py7zr = callPackage ../development/python-modules/py7zr { };
+
   pyabpoa = toPythonModule (pkgs.abpoa.override {
     enablePython = true;
     python3Packages = self;
@@ -10721,6 +10738,8 @@ self: super: with self; {
   pyatem = callPackage ../development/python-modules/pyatem { };
 
   pyatome = callPackage ../development/python-modules/pyatome { };
+
+  pybcj = callPackage ../development/python-modules/pybcj { };
 
   pycketcasts = callPackage ../development/python-modules/pycketcasts { };
 
@@ -10850,6 +10869,8 @@ self: super: with self; {
   pypoint = callPackage ../development/python-modules/pypoint { };
 
   pypoolstation = callPackage ../development/python-modules/pypoolstation { };
+
+  pyppmd = callPackage ../development/python-modules/pyppmd { };
 
   pyrail = callPackage ../development/python-modules/pyrail { };
 
@@ -14863,6 +14884,8 @@ self: super: with self; {
 
   senf = callPackage ../development/python-modules/senf { };
 
+  sensai-utils = callPackage ../development/python-modules/sensai-utils { };
+
   sense-energy = callPackage ../development/python-modules/sense-energy { };
 
   sensirion-ble = callPackage ../development/python-modules/sensirion-ble { };
@@ -16420,6 +16443,8 @@ self: super: with self; {
   tkinter = callPackage ../development/python-modules/tkinter {
     py = python.override (lib.optionalAttrs (!python.isPyPy) { x11Support = true; });
   };
+
+  tianshou = callPackage ../development/python-modules/tianshou { };
 
   tidalapi = callPackage ../development/python-modules/tidalapi { };
 

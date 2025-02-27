@@ -187,12 +187,12 @@ final: prev:
 
   LazyVim = buildVimPlugin {
     pname = "LazyVim";
-    version = "2025-02-15";
+    version = "2025-02-22";
     src = fetchFromGitHub {
       owner = "LazyVim";
       repo = "LazyVim";
-      rev = "401ef48fcd617534b017ef471309bb1bd6465131";
-      sha256 = "1056af0psn9pxm1q9fcfh8rnv66fapq6fbv7h88ppz8c88d5lr0d";
+      rev = "cb223553ff73eb2f37ffb5dc0bb75b76a4677faf";
+      sha256 = "0yc8xcgfjfg0j4jm0rkfpd9d0bg6n29vsm2g9fdmacbmhx79261l";
     };
     meta.homepage = "https://github.com/LazyVim/LazyVim/";
     meta.hydraPlatforms = [ ];
@@ -1029,6 +1029,19 @@ final: prev:
       sha256 = "1jj4q8dmal7rgizqm59dbgjf8by8lxjwnbg39gkbmjiwhdj8q67h";
     };
     meta.homepage = "https://github.com/vmchale/ats-vim/";
+    meta.hydraPlatforms = [ ];
+  };
+
+  augment-vim = buildVimPlugin {
+    pname = "augment.vim";
+    version = "2025-02-12";
+    src = fetchFromGitHub {
+      owner = "augmentcode";
+      repo = "augment.vim";
+      rev = "a50e362f6c16a0c43da20f613e337a6dfd3fb94a";
+      sha256 = "1m1nfiij7wxw63zjh09hc14dxd45rwb6pf48ls101fh461gffdpr";
+    };
+    meta.homepage = "https://github.com/augmentcode/augment.vim/";
     meta.hydraPlatforms = [ ];
   };
 
@@ -3246,12 +3259,12 @@ final: prev:
 
   crates-nvim = buildVimPlugin {
     pname = "crates.nvim";
-    version = "2025-02-07";
+    version = "2025-02-20";
     src = fetchFromGitHub {
       owner = "saecki";
       repo = "crates.nvim";
-      rev = "1d92a7f449a2a76d8f4c3459bd98f450e76d2ea3";
-      sha256 = "1y2d100zrihznhiw5chqj11nfrjkd9rax6aqjdgfb4cd0fa2jgms";
+      rev = "1803c8b5516610ba7cdb759a4472a78414ee6cd4";
+      sha256 = "0bqcdsbhs1ab51nmqd3cx7p6nlpmrjj0a53hax9scpqzr23nvr66";
     };
     meta.homepage = "https://github.com/saecki/crates.nvim/";
     meta.hydraPlatforms = [ ];
@@ -9132,6 +9145,19 @@ final: prev:
       sha256 = "0d7xm5rafw5biv8phfyny2haqq50mnh0q4ms7dkhvp9k1k2k2whz";
     };
     meta.homepage = "https://github.com/Xuyuanp/nerdtree-git-plugin/";
+    meta.hydraPlatforms = [ ];
+  };
+
+  nerdy-nvim = buildVimPlugin {
+    pname = "nerdy.nvim";
+    version = "2025-02-23";
+    src = fetchFromGitHub {
+      owner = "2KAbhishek";
+      repo = "nerdy.nvim";
+      rev = "319cc93d4038b24497eb34c344b20fb462be6c9a";
+      sha256 = "05dnqydmflymc2svijndsrnjv02waliy7si2md35ji9bzpw4cg6k";
+    };
+    meta.homepage = "https://github.com/2KAbhishek/nerdy.nvim/";
     meta.hydraPlatforms = [ ];
   };
 

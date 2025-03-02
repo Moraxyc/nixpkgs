@@ -1216,6 +1216,8 @@ let
 
     mirage-protocols = callPackage ../development/ocaml-modules/mirage-protocols { };
 
+    mirage-ptime = callPackage ../development/ocaml-modules/mirage-ptime { };
+
     mirage-random = callPackage ../development/ocaml-modules/mirage-random { };
 
     mirage-random-test = callPackage ../development/ocaml-modules/mirage-random-test { };
@@ -1567,6 +1569,8 @@ let
     };
 
     posix-base = callPackage ../development/ocaml-modules/posix/base.nix { };
+
+    posix-math2 = callPackage ../development/ocaml-modules/posix/math2.nix { };
 
     posix-socket = callPackage ../development/ocaml-modules/posix/socket.nix { };
 
@@ -2011,6 +2015,8 @@ let
     ### W ###
 
     wasm = callPackage ../development/ocaml-modules/wasm { };
+
+    wasm_of_ocaml-compiler = callPackage ../development/tools/ocaml/js_of_ocaml/compiler-wasm.nix { };
 
     wayland = callPackage ../development/ocaml-modules/wayland { };
 

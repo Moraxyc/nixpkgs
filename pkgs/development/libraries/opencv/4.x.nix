@@ -15,7 +15,6 @@
 , protobuf_29
 , config
 , ocl-icd
-, buildPackages
 , qimgv
 , opencv4
 
@@ -44,7 +43,7 @@
 , enableCublas ? enableCuda
 , enableCudnn ? false # NOTE: CUDNN has a large impact on closure size so we disable it by default
 , enableCufft ? enableCuda
-, cudaPackages ? cudaPackages
+, cudaPackages
 , nvidia-optical-flow-sdk
 
 , enableLto ? true
@@ -84,7 +83,7 @@
 , runAccuracyTests ? true
 , runPerformanceTests ? false
 # Modules to enable via BUILD_LIST to build a customized opencv.
-# An empty lists means this setting is ommited which matches upstreams default.
+# An empty lists means this setting is omitted which matches upstreams default.
 , enabledModules ? [ ]
 
 , AVFoundation
@@ -100,7 +99,6 @@
 let
   inherit (lib.attrsets) mapAttrsToList optionalAttrs;
   inherit (lib.lists) last optionals;
-  inherit (lib.meta) getExe;
   inherit (lib.strings) cmakeBool cmakeFeature cmakeOptionType concatStrings concatStringsSep optionalString;
   inherit (lib.trivial) flip;
 
@@ -213,7 +211,7 @@ let
       hash = "sha256-O+Yshk3N2Lkl6S9qWxWnoDmBngSms88IiCfwjPLMB78=";
     };
     name = "v0.1.2e.zip";
-    md5 = "";
+    md5 = "962ce79e0b95591f226431f7b5f152cd";
     dst = ".cache/ade";
   };
 
@@ -519,7 +517,7 @@ effectiveStdenv.mkDerivation {
       "$out/lib/pkgconfig/opencv4.pc"
     mkdir "$cxxdev"
   ''
-  # fix deps not progagating from opencv4.cxxdev if cuda is disabled
+  # fix deps not propagating from opencv4.cxxdev if cuda is disabled
   # see https://github.com/NixOS/nixpkgs/issues/276691
   + optionalString (!enableCuda) ''
     mkdir -p "$cxxdev/nix-support"

@@ -121,6 +121,15 @@ qtModule {
       extraPrefix = "src/3rdparty/chromium/";
       hash = "sha256-wcby9uD8xb4re9+s+rdl1hcpxDcHxuI68vUNAC7Baas=";
     })
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLoongArch64 [
+    (fetchpatch2 {
+      name = "add-loong64-support.patch";
+      url = "https://github.com/lcpu-club/loongarch-packages/raw/412c61b7f9cef23bf03527a598f6f79ba112e5af/qt6-webengine/add-loong64-support.patch?full_index=1";
+      stripLen = 2;
+      extraPrefix = "";
+      hash = "sha256-yXz/rs7b4anh/8COa0Umo36JcaNoRp5rE1kdpGswqP0=";
+    })
   ];
 
   postPatch = ''
@@ -168,12 +177,16 @@ qtModule {
     "-DQT_FEATURE_qtpdf_build=ON"
     "-DQT_FEATURE_qtpdf_widgets_build=ON"
     "-DQT_FEATURE_qtpdf_quick_build=ON"
+  ]
+  ++ lib.optionals (!stdenv.hostPlatform.isLoongArch64) [
     "-DQT_FEATURE_pdf_v8=ON"
     "-DQT_FEATURE_pdf_xfa=ON"
     "-DQT_FEATURE_pdf_xfa_bmp=ON"
     "-DQT_FEATURE_pdf_xfa_gif=ON"
     "-DQT_FEATURE_pdf_xfa_png=ON"
     "-DQT_FEATURE_pdf_xfa_tiff=ON"
+  ]
+  ++ [
     "-DQT_FEATURE_webengine_system_libevent=ON"
     "-DQT_FEATURE_webengine_system_ffmpeg=ON"
     # android only. https://bugreports.qt.io/browse/QTBUG-100293
@@ -292,6 +305,7 @@ qtModule {
       "aarch64-linux"
       "armv7a-linux"
       "armv7l-linux"
+      "loongarch64-linux"
       "x86_64-linux"
     ];
     # This build takes a long time; particularly on slow architectures

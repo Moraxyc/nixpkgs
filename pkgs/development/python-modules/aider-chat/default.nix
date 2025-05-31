@@ -3,11 +3,10 @@
   stdenv,
   buildPythonPackage,
   fetchFromGitHub,
+  replaceVars,
   gitMinimal,
   portaudio,
   playwright-driver,
-  symlinkJoin,
-  nltk-data,
   pythonOlder,
   pythonAtLeast,
   setuptools-scm,
@@ -122,15 +121,12 @@
 }:
 
 let
-  aider-nltk-data = symlinkJoin {
-    name = "aider-nltk-data";
-    paths = [
-      nltk-data.punkt_tab
-      nltk-data.stopwords
-    ];
-  };
+  aider-nltk-data = nltk.dataDir (d: [
+    d.punkt-tab
+    d.stopwords
+  ]);
 
-  version = "0.83.1";
+  version = "0.83.2";
   aider-chat = buildPythonPackage {
     pname = "aider-chat";
     inherit version;
@@ -143,7 +139,7 @@ let
       owner = "Aider-AI";
       repo = "aider";
       tag = "v${version}";
-      hash = "sha256-2OHPqsS1znl7G4Z8mu8oKHNPdDr4YmSfGzXLylTgooE=";
+      hash = "sha256-fVysmaB2jGS2XJlxyFIdJmQShzxz2q4TQf8zNuCT2GE=";
     };
 
     pythonRelaxDeps = true;
@@ -259,9 +255,11 @@ let
       gitMinimal
     ];
 
-    postPatch = ''
-      substituteInPlace aider/linter.py --replace-fail "\"flake8\"" "\"${flake8}\""
-    '';
+    patches = [
+      (replaceVars ./fix-flake8-invoke.patch {
+        flake8 = lib.getExe flake8;
+      })
+    ];
 
     disabledTestPaths = [
       # Tests require network access

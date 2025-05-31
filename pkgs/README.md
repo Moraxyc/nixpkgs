@@ -107,11 +107,13 @@ Now that this is out of the way. To add a package to Nixpkgs:
 
    - XML::Simple, a Perl module: [`pkgs/top-level/perl-packages.nix`](top-level/perl-packages.nix) (search for the `XMLSimple` attribute). Most Perl modules are so simple to build that they are defined directly in `perl-packages.nix`; no need to make a separate file for them.
 
-   - Adobe Reader: [`pkgs/applications/misc/adobe-reader/default.nix`](applications/misc/adobe-reader/default.nix). Shows how binary-only packages can be supported. In particular the `postFixup` phase uses `patchelf` to set the RUNPATH and ELF interpreter of the executables so that the right libraries are found at runtime.
+   - Discord Game SDK: [`pkgs/by-name/di/discord-gamesdk/package.nix`](./by-name/di/discord-gamesdk/package.nix). Shows how binary-only packages can be supported. In particular, the `autoPatchelfHook` is used to set the RUNPATH and ELF interpreter of the executables so that the right libraries are found at runtime.
 
    Some notes:
 
    - Add yourself as the maintainer of the package.
+
+     - If this is your first time contributing (welcome!), [add yourself to the maintainers list](../maintainers/README.md#how-to-become-a-maintainer) in a separate commit.
 
    - All other [`meta`](https://nixos.org/manual/nixpkgs/stable/#chap-meta) attributes are optional, but it’s still a good idea to provide at least the `description`, `homepage` and [`license`](https://nixos.org/manual/nixpkgs/stable/#sec-meta-license).
 

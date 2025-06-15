@@ -80,7 +80,9 @@ let
 
         backoff = callPackage ../development/ocaml-modules/backoff { };
 
-        bap = janeStreet_0_15.bap;
+        bap = callPackage ../development/ocaml-modules/bap {
+          inherit (pkgs.llvmPackages_14) llvm;
+        };
 
         base64 = callPackage ../development/ocaml-modules/base64 { };
 
@@ -414,6 +416,8 @@ let
 
         dream = callPackage ../development/ocaml-modules/dream { };
 
+        dream-html = callPackage ../development/ocaml-modules/dream-html { };
+
         dream-httpaf = callPackage ../development/ocaml-modules/dream/httpaf.nix { };
 
         dream-pure = callPackage ../development/ocaml-modules/dream/pure.nix { };
@@ -745,6 +749,8 @@ let
 
         hashcons = callPackage ../development/ocaml-modules/hashcons { };
 
+        hc = callPackage ../development/ocaml-modules/hc { };
+
         hex = callPackage ../development/ocaml-modules/hex { };
 
         hidapi = callPackage ../development/ocaml-modules/hidapi { };
@@ -980,26 +986,6 @@ let
                   zstd
                   ;
               };
-
-              # Packages that are not part of janestreet libraries, but still depend
-              # on v0.15 are kept in this scope, too.
-
-              bap =
-                let
-                  ppxlib = jsDeps.ppxlib;
-                  lwt_ppx = self.lwt_ppx.override { inherit ppxlib; };
-                  sedlex = self.sedlex.override { inherit ppxlib ppx_expect; };
-                in
-                callPackage ../development/ocaml-modules/bap {
-                  inherit (pkgs.llvmPackages_14) llvm;
-                  ezjsonm = self.ezjsonm.override { inherit sexplib0; };
-                  ppx_bitstring = self.ppx_bitstring.override { inherit ppxlib; };
-                  ocurl = self.ocurl.override { inherit lwt_ppx; };
-                  piqi = self.piqi.override { inherit sedlex; };
-                  piqi-ocaml = self.piqi-ocaml.override { inherit piqi; };
-                };
-
-              ppx_bap = callPackage ../development/ocaml-modules/ppx_bap { };
             }
           )).overrideScope
             liftJaneStreet;
@@ -1726,7 +1712,7 @@ let
 
         pprint = callPackage ../development/ocaml-modules/pprint { };
 
-        ppx_bap = janeStreet_0_15.ppx_bap;
+        ppx_bap = callPackage ../development/ocaml-modules/ppx_bap { };
 
         ppx_bitstring = callPackage ../development/ocaml-modules/bitstring/ppx.nix { };
 
@@ -1782,6 +1768,8 @@ let
 
         pratter = callPackage ../development/ocaml-modules/pratter { };
 
+        prelude = callPackage ../development/ocaml-modules/prelude { };
+
         prettym = callPackage ../development/ocaml-modules/prettym { };
 
         printbox = callPackage ../development/ocaml-modules/printbox { };
@@ -1809,6 +1797,8 @@ let
         pulseaudio = callPackage ../development/ocaml-modules/pulseaudio {
           inherit (pkgs) pulseaudio;
         };
+
+        pure-html = callPackage ../development/ocaml-modules/dream-html/pure.nix { };
 
         pure-splitmix = callPackage ../development/ocaml-modules/pure-splitmix { };
 

@@ -6612,20 +6612,6 @@ final: prev: {
     meta.hydraPlatforms = [ ];
   };
 
-  jsonfly-nvim = buildVimPlugin {
-    pname = "jsonfly.nvim";
-    version = "2024-09-30";
-    src = fetchFromGitHub {
-      owner = "Myzel394";
-      repo = "jsonfly.nvim";
-      rev = "d713d9ef38115ab09b4a2828dac67b2b3f7d35c4";
-      sha256 = "12nafsy2s01ci679sj6s980kx4lgd7zyqng7xv3gbf2r2xvj3prr";
-      fetchSubmodules = true;
-    };
-    meta.homepage = "https://github.com/Myzel394/jsonfly.nvim/";
-    meta.hydraPlatforms = [ ];
-  };
-
   jule-nvim = buildVimPlugin {
     pname = "jule.nvim";
     version = "2025-02-22";
@@ -14989,6 +14975,20 @@ final: prev: {
     meta.hydraPlatforms = [ ];
   };
 
+  trailblazer-nvim = buildVimPlugin {
+    pname = "trailblazer.nvim";
+    version = "2025-02-04";
+    src = fetchFromGitHub {
+      owner = "LeonHeidelbach";
+      repo = "trailblazer.nvim";
+      rev = "5c0e3ac01e227bb9afe428583f29f0ec34801408";
+      sha256 = "0fvm4gb190b9a2gv3spf7429p2adjbsxcgpgd89azmpgqcsdg509";
+      fetchSubmodules = true;
+    };
+    meta.homepage = "https://github.com/LeonHeidelbach/trailblazer.nvim/";
+    meta.hydraPlatforms = [ ];
+  };
+
   train-nvim = buildVimPlugin {
     pname = "train.nvim";
     version = "2023-07-31";
@@ -21288,12 +21288,12 @@ final: prev: {
 
   vimtex = buildVimPlugin {
     pname = "vimtex";
-    version = "2025-06-02";
+    version = "2025-06-12";
     src = fetchFromGitHub {
       owner = "lervag";
       repo = "vimtex";
-      rev = "f20b11458e97250d690ce0dc8670759b838cace9";
-      sha256 = "1ihq3l1wx7pbm6qw1gky8r51f2z08c723gvc19j1mklcg4gxgw7z";
+      rev = "4b4f18b1b181cdea35fdc418e5eb511f20e1f0fb";
+      sha256 = "1dwp05rkpykq3ppwy45hcy6d8d63sh76i4qmw3387ybisj06929v";
     };
     meta.homepage = "https://github.com/lervag/vimtex/";
     meta.hydraPlatforms = [ ];

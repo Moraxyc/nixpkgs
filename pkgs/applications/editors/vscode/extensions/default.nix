@@ -1343,8 +1343,8 @@ let
         mktplcRef = {
           name = "composer-php-vscode";
           publisher = "devsense";
-          version = "1.58.17223";
-          hash = "sha256-eobPtePHqW0+2PgMN6ydJWMLQJ14FsevKbhZzaXYxqc=";
+          version = "1.59.17466";
+          hash = "sha256-efgwdF1bRE4sngayKq0fcFWDNtvkX+tgEKbF3RyYY68=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/DEVSENSE.composer-php-vscode/changelog";
@@ -1352,7 +1352,7 @@ let
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=DEVSENSE.composer-php-vscode";
           homepage = "https://github.com/DEVSENSE/phptools-docs";
           license = lib.licenses.unfree;
-          maintainers = [ lib.maintainers.drupol ];
+          maintainers = [ ];
         };
       };
 
@@ -1402,7 +1402,7 @@ let
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=DEVSENSE.phptools-vscode";
           homepage = "https://github.com/DEVSENSE/phptools-docs";
           license = lib.licenses.unfree;
-          maintainers = [ lib.maintainers.drupol ];
+          maintainers = [ ];
           platforms = [
             "x86_64-linux"
             "x86_64-darwin"
@@ -1425,7 +1425,7 @@ let
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=DEVSENSE.profiler-php-vscode";
           homepage = "https://github.com/DEVSENSE/phptools-docs";
           license = lib.licenses.unfree;
-          maintainers = [ lib.maintainers.drupol ];
+          maintainers = [ ];
         };
       };
 
@@ -2101,8 +2101,8 @@ let
         mktplcRef = {
           name = "vscode-github-actions";
           publisher = "github";
-          version = "0.27.1";
-          hash = "sha256-mHKaWXSyDmsdQVzMqJI6ctNUwE/6bs1ZyeAEWKg9CV8=";
+          version = "0.27.2";
+          hash = "sha256-yWQQxYRdU5WWaIiGvCtLYH3mrwDv+frm2ml1S1KPThk=";
         };
         meta = {
           description = "Visual Studio Code extension for GitHub Actions workflows and runs for github.com hosted repositories";
@@ -2777,8 +2777,8 @@ let
         mktplcRef = {
           name = "language-julia";
           publisher = "julialang";
-          version = "1.141.2";
-          hash = "sha256-i5mY037rs65BKiQLvUbu9Lup2ljhZI0owqjZ0AUsXMw=";
+          version = "1.144.2";
+          hash = "sha256-9OFMQc5Y+979wYkd3qyuLuw7bRBMcsTQ9uSd2ea5cxk=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/julialang.language-julia/changelog";
@@ -2960,8 +2960,8 @@ let
         mktplcRef = {
           name = "vscord";
           publisher = "leonardssh";
-          version = "5.3.2";
-          hash = "sha256-kj1D0X6Wj088nwgFlWZkPG+zaHsqb0MapycPIfRWEIk=";
+          version = "5.3.5";
+          hash = "sha256-b5osn7UeSkr8gnLZ/PkrxS0WmgHUwfS0jnwTc1Uw0Sg=";
         };
         meta = {
           description = "Highly customizable Discord Rich Presence extension for Visual Studio Code";
@@ -3350,8 +3350,8 @@ let
         mktplcRef = {
           name = "vscode-kubernetes-tools";
           publisher = "ms-kubernetes-tools";
-          version = "1.3.23";
-          hash = "sha256-8s1fuuTwUPd1Z32EqZNloD50KaFlPOxlvMmo5D6NaE4=";
+          version = "1.3.24";
+          hash = "sha256-LO8WWLxvLZKSpQx+iLR8RpRxnck0oZU/A0WzEeDPgyQ=";
         };
         meta = {
           license = lib.licenses.mit;
@@ -4694,8 +4694,8 @@ let
         mktplcRef = {
           name = "tabnine-vscode";
           publisher = "tabnine";
-          version = "3.287.0";
-          hash = "sha256-E4ew40NNuOW9e7ZIsJjkO/4r6gbbC2IsghFbO+n27cg=";
+          version = "3.288.0";
+          hash = "sha256-2wq7ohOIAzF2EXeSkg2ADRLMvksaIeYBDJfSbPwX9vk=";
         };
         meta = {
           license = lib.licenses.mit;

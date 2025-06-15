@@ -177,6 +177,23 @@ with pkgs;
 
   __flattenIncludeHackHook = callPackage ../build-support/setup-hooks/flatten-include-hack { };
 
+  arrayUtilities =
+    let
+      arrayUtilitiesPackages = makeScopeWithSplicing' {
+        otherSplices = generateSplicesForMkScope "arrayUtilities";
+        f =
+          finalArrayUtilities:
+          {
+            callPackages = lib.callPackagesWith (pkgs // finalArrayUtilities);
+          }
+          // lib.packagesFromDirectoryRecursive {
+            inherit (finalArrayUtilities) callPackage;
+            directory = ../build-support/setup-hooks/arrayUtilities;
+          };
+      };
+    in
+    recurseIntoAttrs arrayUtilitiesPackages;
+
   addBinToPathHook = callPackage (
     { makeSetupHook }:
     makeSetupHook {
@@ -1059,8 +1076,6 @@ with pkgs;
   alice-tools-qt6 = qt6Packages.callPackage ../tools/games/alice-tools { };
 
   auditwheel = with python3Packages; toPythonApplication auditwheel;
-
-  bikeshed = python3Packages.callPackage ../applications/misc/bikeshed { };
 
   davinci-resolve-studio = callPackage ../by-name/da/davinci-resolve/package.nix {
     studioVariant = true;
@@ -2029,10 +2044,6 @@ with pkgs;
 
   cloud-init = callPackage ../tools/virtualization/cloud-init { inherit systemd; };
 
-  clingo = callPackage ../applications/science/logic/potassco/clingo.nix { };
-
-  clingcon = callPackage ../applications/science/logic/potassco/clingcon.nix { };
-
   coloredlogs = with python3Packages; toPythonApplication coloredlogs;
 
   czkawka-full = czkawka.wrapper.override {
@@ -2161,10 +2172,6 @@ with pkgs;
     x11Support = false;
     waylandSupport = true;
     espanso = espanso-wayland;
-  };
-
-  fastly = callPackage ../misc/fastly {
-    # If buildGoModule is overridden, provide a matching version of the go attribute
   };
 
   f3d_egl = f3d.override { vtk_9 = vtk_9_egl; };
@@ -3035,9 +3042,7 @@ with pkgs;
     garage_1_x
     ;
 
-  gauge-unwrapped = callPackage ../development/tools/gauge { };
-  gauge = callPackage ../development/tools/gauge/wrapper.nix { };
-  gaugePlugins = recurseIntoAttrs (callPackage ../development/tools/gauge/plugins { });
+  gaugePlugins = recurseIntoAttrs (callPackage ../by-name/ga/gauge/plugins { });
 
   gawd = python3Packages.toPythonApplication python3Packages.gawd;
 
@@ -3826,6 +3831,10 @@ with pkgs;
 
   # Not in aliases because it wouldn't get picked up by callPackage
   netbox = netbox_4_2;
+
+  netcap-nodpi = callPackage ../by-name/ne/netcap/package.nix {
+    withDpi = false;
+  };
 
   netcat = libressl.nc.overrideAttrs (old: {
     meta = old.meta // {
@@ -4765,13 +4774,6 @@ with pkgs;
 
   wyrd = callPackage ../tools/misc/wyrd {
     ocamlPackages = ocaml-ng.ocamlPackages_4_14;
-  };
-
-  xbursttools = callPackage ../tools/misc/xburst-tools {
-    # It needs a cross compiler for mipsel to build the firmware it will
-    # load into the Ben Nanonote
-    gccCross = pkgsCross.ben-nanonote.buildPackages.gccWithoutTargetLibc;
-    autoconf = buildPackages.autoconf269;
   };
 
   clipbuzz = callPackage ../tools/misc/clipbuzz {
@@ -8321,8 +8323,6 @@ with pkgs;
     }
   );
 
-  qxmpp = qt6Packages.callPackage ../development/libraries/qxmpp { };
-
   gnutls = callPackage ../development/libraries/gnutls {
     util-linux = util-linuxMinimal; # break the cyclic dependency
     autoconf = buildPackages.autoconf269;
@@ -10134,7 +10134,6 @@ with pkgs;
       spatial
       survival
     ];
-    radian = python3Packages.radian;
     # Override this attribute to register additional libraries.
     packages = [ ];
     # Override this attribute if you want to expose R with the same set of
@@ -10320,7 +10319,6 @@ with pkgs;
   inherit (callPackages ../servers/firebird { })
     firebird_4
     firebird_3
-    firebird_2_5
     firebird
     ;
 
@@ -11108,8 +11106,7 @@ with pkgs;
 
   projecteur = libsForQt5.callPackage ../os-specific/linux/projecteur { };
 
-  lkl = callPackage ../applications/virtualization/lkl { };
-  lklWithFirewall = callPackage ../applications/virtualization/lkl { firewallSupport = true; };
+  lklWithFirewall = lkl.override { firewallSupport = true; };
 
   inherit (callPackages ../os-specific/linux/kernel-headers { inherit (pkgsBuildBuild) elf-header; })
     linuxHeaders
@@ -12121,7 +12118,6 @@ with pkgs;
 
   djv = callPackage ../by-name/dj/djv/package.nix { openexr = openexr_2; };
 
-  djview = callPackage ../applications/graphics/djview { };
   djview4 = djview;
 
   dmenu = callPackage ../applications/misc/dmenu { };
@@ -12140,7 +12136,7 @@ with pkgs;
     docker_28
     ;
 
-  docker = docker_27;
+  docker = docker_28;
   docker-client = docker.override { clientOnly = true; };
 
   docker-gc = callPackage ../applications/virtualization/docker/gc.nix { };
@@ -12432,33 +12428,11 @@ with pkgs;
 
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     inherit (firefox-unwrapped.passthru) applicationName;
-    channel = "release";
     generated = import ../applications/networking/browsers/firefox-bin/release_sources.nix;
   };
 
   firefox-bin = wrapFirefox firefox-bin-unwrapped {
     pname = "firefox-bin";
-  };
-
-  firefox-beta-bin-unwrapped = firefox-bin-unwrapped.override {
-    inherit (firefox-beta-unwrapped.passthru) applicationName;
-    channel = "beta";
-    generated = import ../applications/networking/browsers/firefox-bin/beta_sources.nix;
-  };
-
-  firefox-beta-bin = res.wrapFirefox firefox-beta-bin-unwrapped {
-    pname = "firefox-beta-bin";
-  };
-
-  firefox-devedition-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
-    inherit (firefox-devedition-unwrapped.passthru) applicationName;
-    channel = "developer-edition";
-    generated = import ../applications/networking/browsers/firefox-bin/developer-edition_sources.nix;
-  };
-
-  firefox-devedition-bin = res.wrapFirefox firefox-devedition-bin-unwrapped {
-    pname = "firefox-devedition-bin";
-    wmClass = "firefox-aurora";
   };
 
   librewolf-unwrapped = import ../applications/networking/browsers/librewolf {
@@ -14390,6 +14364,12 @@ with pkgs;
   vscodium-fhs = vscodium.fhs;
   vscodium-fhsWithPackages = vscodium.fhsWithPackages;
 
+  code-cursor = callPackage ../by-name/co/code-cursor/package.nix {
+    vscode-generic = ../applications/editors/vscode/generic.nix;
+  };
+  code-cursor-fhs = code-cursor.fhs;
+  code-cursor-fhsWithPackages = code-cursor.fhsWithPackages;
+
   windsurf = callPackage ../by-name/wi/windsurf/package.nix {
     vscode-generic = ../applications/editors/vscode/generic.nix;
   };
@@ -14581,10 +14561,6 @@ with pkgs;
   libxpdf = callPackage ../applications/misc/xpdf/libxpdf.nix { };
 
   xygrib = libsForQt5.callPackage ../applications/misc/xygrib { };
-
-  yabar = callPackage ../applications/window-managers/yabar { };
-
-  yabar-unstable = callPackage ../applications/window-managers/yabar/unstable.nix { };
 
   ydiff = with python3.pkgs; toPythonApplication ydiff;
 
@@ -14947,12 +14923,6 @@ with pkgs;
 
   flightgear = libsForQt5.callPackage ../games/flightgear { };
 
-  freecad-wayland = freecad.override { withWayland = true; };
-  freecad-qt6 = freecad.override {
-    withWayland = true;
-    qtVersion = 6;
-  };
-
   freeciv = callPackage ../games/freeciv {
     sdl2Client = false;
     gtkClient = true;
@@ -15144,22 +15114,17 @@ with pkgs;
     protobuf = protobuf_21;
   };
 
-  quake3wrapper = callPackage ../games/quake3/wrapper { };
-
-  quake3demo = quake3wrapper {
-    name = "quake3-demo-${lib.getVersion quake3demodata}";
-    description = "Demo of Quake 3 Arena, a classic first-person shooter";
-    paks = [
-      quake3pointrelease
-      quake3demodata
-    ];
-  };
-
-  quake3demodata = callPackage ../games/quake3/content/demo.nix { };
-
-  quake3pointrelease = callPackage ../games/quake3/content/pointrelease.nix { };
-
-  quake3hires = callPackage ../games/quake3/content/hires.nix { };
+  inherit (import ../games/quake3 pkgs.callPackage)
+    quake3wrapper
+    quake3arenadata
+    quake3demodata
+    quake3pointrelease
+    quake3arena
+    quake3arena-hires
+    quake3demo
+    quake3demo-hires
+    quake3hires
+    ;
 
   quakespasm = callPackage ../games/quakespasm { };
   vkquake = callPackage ../games/quakespasm/vulkan.nix { };

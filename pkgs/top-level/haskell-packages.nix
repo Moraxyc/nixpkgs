@@ -345,24 +345,14 @@ in
         llvmPackages = pkgs.llvmPackages_15;
       };
       ghc984 = callPackage ../development/compilers/ghc/9.8.4.nix {
-        bootPkgs =
-          if stdenv.buildPlatform.isAarch64 && stdenv.buildPlatform.isMusl then
-            bb.packages.ghc984Binary
-          else if stdenv.buildPlatform.isAarch32 then
-            # For GHC 9.6 no armv7l bindists are available.
-            bb.packages.ghc963
-          else if stdenv.buildPlatform.isPower64 && stdenv.buildPlatform.isLittleEndian then
-            bb.packages.ghc963
-          else
-            bb.packages.ghc963Binary;
+        bootPkgs = bb.packages.ghc963Binary; # 以 GHC 9.6 binary 为 bootPkgs
         inherit (buildPackages.python3Packages) sphinx;
-        # Need to use apple's patched xattr until
-        # https://github.com/xattr/xattr/issues/44 and
-        # https://github.com/xattr/xattr/issues/55 are solved.
         inherit (buildPackages.darwin) xattr autoSignDarwinBinariesHook;
-        # Support range >= 11 && < 16
         buildTargetLlvmPackages = pkgsBuildTarget.llvmPackages_15;
         llvmPackages = pkgs.llvmPackages_15;
+        useLLVM = false;
+        libffi = null;
+        enableUnregisterised = true;
       };
       ghc98 = compiler.ghc984;
       ghc9101 = callPackage ../development/compilers/ghc/9.10.1.nix {

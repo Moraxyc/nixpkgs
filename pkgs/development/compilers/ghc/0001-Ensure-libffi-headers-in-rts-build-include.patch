@@ -1,0 +1,29 @@
+From 5e548aa1334d801242bed357254b5b776c7022a8 Mon Sep 17 00:00:00 2001
+From: Moraxyc <i@qaq.li>
+Date: Sun, 20 Jul 2025 01:46:48 +0800
+Subject: [PATCH] Ensure libffi headers in rts/build/include
+
+---
+ hadrian/src/Rules/Libffi.hs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/hadrian/src/Rules/Libffi.hs b/hadrian/src/Rules/Libffi.hs
+index caa12fe..c5eb2a1 100644
+--- a/hadrian/src/Rules/Libffi.hs
++++ b/hadrian/src/Rules/Libffi.hs
+@@ -179,6 +179,12 @@ libffiRules = do
+ 
+         -- Note this build needs the Makefile, triggering the rules bellow.
+         build $ target context (Make libffiPath) [] []
++        forM_ libffiHeaderFiles $ \header -> do
++            srcDir <- libffiHeaderDir stage
++            let src = srcDir -/- header
++                dst = path -/- "rts/build/include" -/- header
++            putNormal "[DEBUG] Copying libffi headers!"
++            copyFile src dst
+         libffiName' <- interpretInContext context (libffiLocalName (Just True))
+ 
+         -- Produces all install files.
+-- 
+2.50.0
+

@@ -291,7 +291,8 @@
           url = "https://gitlab.haskell.org/ghc/ghc/-/commit/39bb6e583d64738db51441a556d499aa93a4fc4a.patch";
           sha256 = "0w5fx413z924bi2irsy1l4xapxxhrq158b5gn6jzrbsmhvmpirs0";
         })
-      ];
+      ]
+      ++ lib.optional (libffi == null) ./0001-Ensure-libffi-headers-in-rts-build-include.patch;
 
     stdenv = stdenvNoCC;
   },

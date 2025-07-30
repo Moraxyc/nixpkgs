@@ -25,6 +25,7 @@ let
     "ghc8107Binary"
     "ghc902Binary"
     "ghc924Binary"
+    "ghc928LoongArch64Binary"
     "ghc963Binary"
     "ghc984Binary"
     # ghcjs
@@ -98,6 +99,11 @@ in
 
       ghc924Binary = callPackage ../development/compilers/ghc/9.2.4-binary.nix {
         llvmPackages = pkgs.llvmPackages_12;
+      };
+
+      ghc928LoongArch64Binary = callPackage ../development/compilers/ghc/9.2.8-loongarch64-binary.nix {
+        # LLVM doesn't support LoongArch64 until 16. We use 18 here following Debian.
+        llvmPackages = pkgs.llvmPackages_18;
       };
 
       ghc963Binary = callPackage ../development/compilers/ghc/9.6.3-binary.nix {
@@ -355,26 +361,37 @@ in
         buildTargetLlvmPackages = pkgsBuildTarget.llvmPackages_15;
         llvmPackages = pkgs.llvmPackages_15;
       };
-      ghc984 = callPackage ../development/compilers/ghc/9.8.4.nix {
-        bootPkgs =
-          if stdenv.buildPlatform.isAarch64 && stdenv.buildPlatform.isMusl then
-            bb.packages.ghc984Binary
-          else if stdenv.buildPlatform.isAarch32 then
-            # For GHC 9.6 no armv7l bindists are available.
-            bb.packages.ghc963
-          else if stdenv.buildPlatform.isPower64 && stdenv.buildPlatform.isLittleEndian then
-            bb.packages.ghc963
-          else
-            bb.packages.ghc963Binary;
-        inherit (buildPackages.python3Packages) sphinx;
-        # Need to use apple's patched xattr until
-        # https://github.com/xattr/xattr/issues/44 and
-        # https://github.com/xattr/xattr/issues/55 are solved.
-        inherit (buildPackages.darwin) xattr autoSignDarwinBinariesHook;
-        # Support range >= 11 && < 16
-        buildTargetLlvmPackages = pkgsBuildTarget.llvmPackages_15;
-        llvmPackages = pkgs.llvmPackages_15;
-      };
+      ghc984 =
+        if stdenv.hostPlatform == stdenv.targetPlatform && stdenv.hostPlatform.isLoongArch64 then
+          callPackage (import ../development/compilers/ghc/9.8.4-loongarch64.nix pkgs.fetchpatch) {
+            bootPkgs = bb.packages.ghc928LoongArch64Binary;
+            inherit (buildPackages.python3Packages) sphinx;
+            inherit (buildPackages.darwin) xattr autoSignDarwinBinariesHook;
+            # For LoongArch64, support range is widen to < 19
+            buildTargetLlvmPackages = pkgsBuildTarget.llvmPackages_18;
+            llvmPackages = pkgs.llvmPackages_18;
+          }
+        else
+          callPackage ../development/compilers/ghc/9.8.4.nix {
+            bootPkgs =
+              if stdenv.buildPlatform.isAarch64 && stdenv.buildPlatform.isMusl then
+                bb.packages.ghc984Binary
+              else if stdenv.buildPlatform.isAarch32 then
+                # For GHC 9.6 no armv7l bindists are available.
+                bb.packages.ghc963
+              else if stdenv.buildPlatform.isPower64 && stdenv.buildPlatform.isLittleEndian then
+                bb.packages.ghc963
+              else
+                bb.packages.ghc963Binary;
+            inherit (buildPackages.python3Packages) sphinx;
+            # Need to use apple's patched xattr until
+            # https://github.com/xattr/xattr/issues/44 and
+            # https://github.com/xattr/xattr/issues/55 are solved.
+            inherit (buildPackages.darwin) xattr autoSignDarwinBinariesHook;
+            # Support range >= 11 && < 16
+            buildTargetLlvmPackages = pkgsBuildTarget.llvmPackages_15;
+            llvmPackages = pkgs.llvmPackages_15;
+          };
       ghc98 = compiler.ghc984;
       ghc9101 = callPackage ../development/compilers/ghc/9.10.1.nix {
         bootPkgs =
@@ -540,6 +557,12 @@ in
       ghc924Binary = callPackage ../development/haskell-modules {
         buildHaskellPackages = bh.packages.ghc924Binary;
         ghc = bh.compiler.ghc924Binary;
+        compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.2.x.nix { };
+        packageSetConfig = bootstrapPackageSet;
+      };
+      ghc928LoongArch64Binary = callPackage ../development/haskell-modules {
+        buildHaskellPackages = bh.packages.ghc928LoongArch64Binary;
+        ghc = bh.compiler.ghc928LoongArch64Binary;
         compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.2.x.nix { };
         packageSetConfig = bootstrapPackageSet;
       };

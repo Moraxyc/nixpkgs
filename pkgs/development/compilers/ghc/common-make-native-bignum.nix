@@ -299,7 +299,9 @@ stdenv.mkDerivation (
         stripLen = 1;
         extraPrefix = "libraries/unix/";
       })
+
     ]
+
     ++ lib.optionals (lib.versionOlder version "9.4") [
       # fix hyperlinked haddock sources: https://github.com/haskell/haddock/pull/1482
       (fetchpatch {

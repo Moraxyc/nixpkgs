@@ -12,7 +12,7 @@
   libapparmor,
   libselinux,
   libseccomp,
-  versionCheckHook,
+  testers,
 }:
 
 buildGoModule (finalAttrs: {
@@ -71,9 +71,11 @@ buildGoModule (finalAttrs: {
     runHook postInstall
   '';
 
-  doInstallCheck = true;
-  nativeInstallCheckInputs = [ versionCheckHook ];
-  versionCheckProgramArg = "--version";
+  # versionCheckHook cannot be used because buildah requires $HOME to be set
+  passthru.tests.version = testers.testVersion {
+    package = finalAttrs.finalPackage;
+    command = "HOME=$(mktemp -d) buildah --version";
+  };
 
   meta = {
     description = "Tool which facilitates building OCI images";

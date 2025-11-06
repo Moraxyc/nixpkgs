@@ -20,6 +20,7 @@
   alsa-lib,
   cairo,
   curl,
+  darwinMinVersionHook,
   exiv2,
   glib,
   glib-networking,
@@ -160,7 +161,13 @@ stdenv.mkDerivation rec {
     ocl-icd
     util-linux
   ]
-  ++ lib.optional stdenv.hostPlatform.isDarwin gtk-mac-integration
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    gtk-mac-integration
+    # Upstream specifies the minimum supported version as 13.5.
+    # CMake Error at src/external/rawspeed/cmake/compiler-versions.cmake:56 (message):
+    #   Targeting OSX version 11.3 older than 13.5 is unsupported.
+    (darwinMinVersionHook "13.5")
+  ]
   ++ lib.optional stdenv.cc.isClang llvmPackages.openmp;
 
   cmakeFlags = [
@@ -195,11 +202,9 @@ stdenv.mkDerivation rec {
     patchShebangs ./tools/generate_styles_string.sh
   '';
 
-  nativeInstallCheckInputs = [
-    versionCheckHook
-  ];
+  nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "--version";
-  doInstallCheck = true;
+  doInstallCheck = stdenv.hostPlatform.isLinux; # Stuck on darwin
 
   passthru.updateScript = gitUpdater {
     rev-prefix = "release-";

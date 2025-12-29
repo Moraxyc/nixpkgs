@@ -178,6 +178,10 @@ buildPythonPackage rec {
         ];
       }
       // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+        "src/twisted/test/test_tcp.py" = [
+          # tests won't work in nix sandbox on darwin
+          "CannotBindTests.test_clientBind"
+        ];
         "src/twisted/internet/test/test_process.py" = [
           # invalid syntaax
           "ProcessTestsBuilder_AsyncioSelectorReactorTests.test_openFileDescriptors"

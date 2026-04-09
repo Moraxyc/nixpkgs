@@ -30,6 +30,7 @@ in
       prePnpmInstall ? "",
       pnpmInstallFlags ? [ ],
       fetcherVersion ? null,
+      fixedOutput ? true,
       ...
     }@args:
     let
@@ -189,9 +190,8 @@ in
 
           dontConfigure = true;
           dontBuild = true;
-          outputHashMode = "recursive";
         }
-        // hash'
+        // lib.optionalAttrs fixedOutput ({ outputHashMode = "recursive"; } // hash')
       )
     )
   );

@@ -19,7 +19,10 @@ let
   };
 
   meta = {
-    maintainers = with lib.maintainers; [ xddxdd ];
+    maintainers = with lib.maintainers; [
+      xddxdd
+      moraxyc
+    ];
     description = "Tencent QQ Music";
     homepage = "https://y.qq.com/";
     platforms = lib.remove "any-darwin" (lib.attrNames sources) ++ lib.platforms.darwin;

@@ -1,0 +1,147 @@
+{
+  lib,
+  stdenvNoCC,
+  fetchurl,
+  autoPatchelfHook,
+  unzip,
+  installShellFiles,
+  versionCheckHook,
+  makeWrapper,
+  openssl,
+  writeShellScript,
+  curl,
+  jq,
+  common-updater-scripts,
+  cctools,
+  darwin,
+  rcodesign,
+}:
+
+let
+  inherit (stdenvNoCC.hostPlatform)
+    isLinux
+    isDarwin
+    isMusl
+    system
+    ;
+in
+stdenvNoCC.mkDerivation (finalAttrs: {
+  pname = "bun-bin";
+  version = "1.4.2";
+
+  src =
+    let
+      platformKey = system + lib.optionalString isMusl "-musl";
+    in
+    finalAttrs.passthru.sources.${platformKey} or finalAttrs.passthru.sources.${system}
+      or (throw "Unsupported system: ${platformKey}");
+
+  sourceRoot = if isDarwin then "bun-darwin-aarch64" else null;
+
+  strictDeps = true;
+  nativeBuildInputs = [
+    unzip
+    installShellFiles
+    makeWrapper
+  ]
+  ++ lib.optionals isLinux [ autoPatchelfHook ];
+  buildInputs = [ openssl ];
+
+  dontConfigure = true;
+  dontBuild = true;
+
+  installPhase = ''
+    runHook preInstall
+
+    install -Dm 755 ./bun $out/bin/bun
+    ln -s bun $out/bin/bunx
+
+    runHook postInstall
+  '';
+
+  postPhases = [ "postPatchelf" ];
+
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+  doInstallCheck = stdenvNoCC.buildPlatform.canExecute stdenvNoCC.hostPlatform;
+
+  postPatchelf =
+    lib.optionalString isDarwin ''
+      '${lib.getExe' cctools "${cctools.targetPrefix}install_name_tool"}' $out/bin/bun \
+        -change /usr/lib/libicucore.A.dylib '${lib.getLib darwin.ICU}/lib/libicucore.A.dylib'
+      '${lib.getExe rcodesign}' sign --code-signature-flags linker-signed $out/bin/bun
+    ''
+    + lib.optionalString (stdenvNoCC.buildPlatform.canExecute stdenvNoCC.hostPlatform) ''
+      installShellCompletion --cmd bun \
+        --bash <(SHELL="bash" $out/bin/bun completions) \
+        --zsh <(SHELL="zsh" $out/bin/bun completions) \
+        --fish <(SHELL="fish" $out/bin/bun completions)
+    '';
+
+  passthru = {
+    sources = {
+      "aarch64-darwin" = fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${finalAttrs.version}/bun-darwin-aarch64.zip";
+        hash = "sha256-kJh6OhbX21VtiGrD1VHnttPt8KHPQ6yu1iLoZ2vh0S8=";
+      };
+      "aarch64-linux" = fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${finalAttrs.version}/bun-linux-aarch64.zip";
+        hash = "sha256-VDKLvC2cjgyfiSxUTWbFeoO4QTnjSQnl7oF1jxrI/ac=";
+      };
+      "aarch64-linux-musl" = fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${finalAttrs.version}/bun-linux-aarch64-musl.zip";
+        hash = "sha256-cXYLbI6jBiO4GkkHy4FdSOLqJm8uc+dRU0pEoGB5UN8=";
+      };
+      "x86_64-linux" = fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${finalAttrs.version}/bun-linux-x64-baseline.zip";
+        hash = "sha256-xngEDxT+BEDrg503y9DOTAUaMtpygGrJfeamqra/co8=";
+      };
+      "x86_64-linux-musl" = fetchurl {
+        url = "https://github.com/oven-sh/bun/releases/download/bun-v${finalAttrs.version}/bun-linux-x64-musl-baseline.zip";
+        hash = "sha256-duHbhOmPIveN4Kh+MJv7vyl3MoR/lyDbNnUGRshcjBg=";
+      };
+    };
+    updateScript = writeShellScript "update-bun" ''
+      set -o errexit
+      export PATH="${
+        lib.makeBinPath [
+          curl
+          jq
+          common-updater-scripts
+        ]
+      }"
+      NEW_VERSION=$(curl --silent https://api.github.com/repos/oven-sh/bun/releases/latest | jq '.tag_name | ltrimstr("bun-v")' --raw-output)
+      if [[ "${finalAttrs.version}" = "$NEW_VERSION" ]]; then
+          echo "The new version same as the old version."
+          exit 0
+      fi
+      for platform in ${lib.escapeShellArgs finalAttrs.meta.platforms}; do
+        update-source-version "bun-bin" "$NEW_VERSION" --ignore-same-version --source-key="sources.$platform"
+      done
+    '';
+  };
+
+  meta = {
+    homepage = "https://bun.sh";
+    changelog = "https://bun.sh/blog/bun-v${finalAttrs.version}";
+    description = "Incredibly fast JavaScript runtime, bundler, transpiler and package manager – all in one (binary release)";
+    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+    longDescription = ''
+      All in one fast & easy-to-use tool. Instead of 1,000 node_modules for development, you only need bun.
+    '';
+    license = with lib.licenses; [
+      mit # bun core
+      lgpl21Only # javascriptcore and webkit
+    ];
+    mainProgram = "bun";
+    maintainers = with lib.maintainers; [
+      DAlperin
+      jk
+      thilobillerbeck
+      cdmistman
+      diogomdp
+    ];
+    platforms = builtins.attrNames finalAttrs.passthru.sources;
+  };
+})

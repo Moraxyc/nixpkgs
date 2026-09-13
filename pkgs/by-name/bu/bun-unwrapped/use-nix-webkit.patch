@@ -1,0 +1,66 @@
+diff --git a/scripts/build/bun.ts b/scripts/build/bun.ts
+index fc1a748..cc3c886 100644
+--- a/scripts/build/bun.ts
++++ b/scripts/build/bun.ts
+@@ -81,7 +81,7 @@ function systemLibs(cfg: Config): string[] {
+     // Linux local WebKit: link system ICU (prebuilt bundles its own).
+     // Assumes system ICU is in default lib paths — true on most distros.
+     // Android: no system ICU; the local WebKit build must bundle it.
+-    if (cfg.webkit === "local" && cfg.abi !== "android") {
++    if ((cfg.webkit === "local" || process.env.BUN_WEBKIT_DIR) && cfg.abi !== "android") {
+       libs.push("-licudata", "-licui18n", "-licuuc");
+     }
+   }
+diff --git a/scripts/build/deps/webkit.ts b/scripts/build/deps/webkit.ts
+index 7e8ddec..dbc3c15 100644
+--- a/scripts/build/deps/webkit.ts
++++ b/scripts/build/deps/webkit.ts
+@@ -190,6 +190,14 @@ export const webkit: Dependency = {
+   versionMacro: "WEBKIT",
+ 
+   source: cfg => {
++    if (process.env.BUN_WEBKIT_DIR) {
++      return {
++        kind: "prebuilt",
++        url: "file://" + process.env.BUN_WEBKIT_DIR,
++        identity: "nix",
++        destDir: process.env.BUN_WEBKIT_DIR,
++      };
++    }
+     if (cfg.webkit === "prebuilt") {
+       const src: Source = {
+         kind: "prebuilt",
+@@ -222,6 +230,9 @@ export const webkit: Dependency = {
+   },
+ 
+   build: cfg => {
++    if (process.env.BUN_WEBKIT_DIR) {
++      return { kind: "none" };
++    }
+     if (cfg.webkit === "prebuilt") {
+       return { kind: "none" };
+     }
+@@ -392,6 +403,23 @@ export const webkit: Dependency = {
+   },
+ 
+   provides: cfg => {
++    if (process.env.BUN_WEBKIT_DIR) {
++      const libs = [...coreLibs(cfg), bmallocLib(cfg)];
++      const includes = [
++        "include",
++        "include/JavaScriptCore",
++        "include/wtf",
++        "include/bmalloc",
++        ".",
++        "JavaScriptCore/Headers",
++        "JavaScriptCore/Headers/JavaScriptCore",
++        "JavaScriptCore/PrivateHeaders",
++        "JavaScriptCore/PrivateHeaders/JavaScriptCore",
++        "WTF/Headers",
++        "bmalloc/Headers",
++      ];
++      return { libs, includes };
++    }
+     if (cfg.webkit === "prebuilt") {
+       // Paths relative to prebuilt destDir — emitPrebuilt resolves them.
+       //

@@ -1,0 +1,13 @@
+[package]
+name = "setup-etc-ng"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eyre = "0.6.12"
+nix = { version = "0.31.3", features = ["fs", "user"] }
+walkdir = "2.5.0"
+
+[profile.release]
+strip = true
+lto = true

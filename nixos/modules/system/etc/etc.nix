@@ -95,6 +95,16 @@ in
 
   options = {
 
+    system.etc.useSetupEtcNg = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether to use `setup-etc-ng`, an experimental rewrite of the
+        `setup-etc.pl` Perl script in Rust, with the goal of replacing the
+        original Perl script.
+      '';
+    };
+
     system.etc.overlay = {
       enable = lib.mkOption {
         type = lib.types.bool;
@@ -374,10 +384,17 @@ in
           fi
         ''
       else
+        let
+          setupEtc =
+            if config.system.etc.useSetupEtcNg then
+              "${lib.getExe pkgs.setup-etc-ng} ${etc}/etc"
+            else
+              "${pkgs.perl.withPackages (p: [ p.FileSlurp ])}/bin/perl ${./setup-etc.pl} ${etc}/etc";
+        in
         ''
           # Set up the statically computed bits of /etc.
           echo "setting up /etc..."
-          ${pkgs.perl.withPackages (p: [ p.FileSlurp ])}/bin/perl ${./setup-etc.pl} ${etc}/etc
+          ${setupEtc}
         '';
 
     system.build.etcBasedir = pkgs.runCommandLocal "etc-lowerdir" { } ''

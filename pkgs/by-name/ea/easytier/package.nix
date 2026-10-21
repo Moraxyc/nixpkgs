@@ -4,6 +4,8 @@
   fetchFromGitHub,
   rustPlatform,
   protobuf,
+  pkg-config,
+  openssl,
   nixosTests,
   nix-update-script,
   installShellFiles,
@@ -26,14 +28,25 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-lwqpOVKFm85AiBb7NWLAkjSrWSe5pzF0AuEmmDo+v0k=";
   };
 
-  cargoHash = "sha256-c+rOjokrL0U63s1CMfy6KlGI7VoSmtxuQjBNDAagSdg=";
+  cargoPatches = [
+    # TODO: remove this patch once upstream bumps webpki
+    #  webpki-roots 0.26.3 -> 0.26.11
+    #  rustls-webpki 0.103.3 -> 0.103.16
+    #  webpki-roots 1.0.6 -> 1.0.10
+    ./bump-webpki.patch
+  ];
+
+  cargoHash = "sha256-IxdKZABnBBCr4+n+5rYLK81D2ULuSvfv31DSN/JHJZQ=";
 
   nativeBuildInputs = [
     protobuf
+    pkg-config
     rustPlatform.bindgenHook
     installShellFiles
     mold
   ];
+
+  buildInputs = [ openssl ];
 
   buildNoDefaultFeatures = stdenv.hostPlatform.isMips;
   buildFeatures = lib.optional stdenv.hostPlatform.isMips "mips" ++ lib.optional withQuic "quic";

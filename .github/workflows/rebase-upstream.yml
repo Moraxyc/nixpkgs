@@ -1,0 +1,385 @@
+name: Rebase on upstream nixos-unstable
+
+on:
+  schedule:
+    - cron: "17 0,12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: rebase-upstream-nixos-unstable
+  cancel-in-progress: false
+
+env:
+  INITIAL_FETCH_DEPTH: 32
+
+jobs:
+  rebase:
+    if: github.repository == 'Moraxyc/nixpkgs' && github.ref == 'refs/heads/patched'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Create Rebase Bot token
+        id: rebase-bot
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.REBASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.REBASE_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-workflows: write
+          permission-issues: write
+
+      - name: Fetch history
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clone \
+            --quiet \
+            --filter=blob:none \
+            --no-checkout \
+            --no-tags \
+            --single-branch \
+            --branch patched \
+            --depth="$INITIAL_FETCH_DEPTH" \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            .
+
+          git remote add \
+            upstream \
+            https://github.com/NixOS/nixpkgs.git
+
+          git config remote.upstream.promisor true
+          git config remote.upstream.partialclonefilter blob:none
+          git config gc.auto 0
+
+          git fetch \
+            --quiet \
+            --filter=blob:none \
+            --no-tags \
+            --no-recurse-submodules \
+            --depth="$INITIAL_FETCH_DEPTH" \
+            upstream \
+            +refs/heads/nixos-unstable:refs/remotes/upstream/nixos-unstable
+
+      - name: Configure Git identity
+        env:
+          GH_TOKEN: ${{ steps.rebase-bot.outputs.token }}
+          APP_SLUG: ${{ steps.rebase-bot.outputs.app-slug }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bot_id="$(
+            gh api \
+              "/users/${APP_SLUG}[bot]" \
+              --jq '.id'
+          )"
+
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email \
+            "${bot_id}+${APP_SLUG}[bot]@users.noreply.github.com"
+
+      - name: Rebase and push
+        env:
+          GH_TOKEN: ${{ steps.rebase-bot.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected="$(git rev-parse refs/heads/patched)"
+          upstream="$(git rev-parse refs/remotes/upstream/nixos-unstable)"
+
+          deepen="$INITIAL_FETCH_DEPTH"
+          personal=""
+
+          while [[ -z "$personal" ]]; do
+            personal="$(
+              git log \
+                --first-parent \
+                --format='%H' \
+                --grep='^personal: configure fork workflows$' \
+                -1 \
+                "$expected"
+            )"
+
+            if [[ -n "$personal" ]]; then
+              break
+            fi
+
+            if [[ ! -f .git/shallow ]]; then
+              echo "::error::fork configuration commit was not found"
+              exit 1
+            fi
+
+            echo "Configuration commit not found yet; deepening by ${deepen}"
+
+            git fetch \
+              --quiet \
+              --filter=blob:none \
+              --no-tags \
+              --no-recurse-submodules \
+              --deepen="$deepen" \
+              origin \
+              +refs/heads/patched:refs/remotes/origin/patched
+
+            deepen=$((deepen * 2))
+          done
+
+          personal_parent="$(git rev-parse "${personal}^")"
+
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+
+          git show \
+            "$expected:.github/workflows/rebase-upstream.yml" \
+            > "$tmp/rebase-upstream.yml"
+
+          git show \
+            "$expected:.github/dependabot.yml" \
+            > "$tmp/dependabot.yml"
+
+          if [[ "$personal" == "$expected" ]]; then
+            local_tip="$personal_parent"
+          else
+            git update-ref \
+              refs/heads/local-without-config \
+              "$expected"
+
+            post_personal_count="$(
+              git rev-list \
+                --count \
+                "$personal..$expected"
+            )"
+
+            echo "Moving ${post_personal_count} commit(s) after the old configuration commit"
+
+            if ! git replay \
+              --onto="$personal_parent" \
+              --ref=refs/heads/local-without-config \
+              "$personal..$expected"
+            then
+              echo "::error::conflict while removing previous configuration commit"
+              exit 1
+            fi
+
+            local_tip="$(
+              git rev-parse refs/heads/local-without-config
+            )"
+          fi
+
+          deepen="$INITIAL_FETCH_DEPTH"
+          base=""
+
+          while ! base="$(
+            git merge-base \
+              "$local_tip" \
+              "$upstream" \
+              2>/dev/null
+          )"; do
+            if [[ ! -f .git/shallow ]]; then
+              echo "::error::patched and nixos-unstable have no common ancestor"
+              exit 1
+            fi
+
+            echo "Merge base not found yet; deepening by ${deepen}"
+
+            git fetch \
+              --quiet \
+              --filter=blob:none \
+              --no-tags \
+              --no-recurse-submodules \
+              --deepen="$deepen" \
+              origin \
+              +refs/heads/patched:refs/remotes/origin/patched
+
+            git fetch \
+              --quiet \
+              --filter=blob:none \
+              --no-tags \
+              --no-recurse-submodules \
+              --deepen="$deepen" \
+              upstream \
+              +refs/heads/nixos-unstable:refs/remotes/upstream/nixos-unstable
+
+            deepen=$((deepen * 2))
+          done
+
+          if [[ "$personal" == "$expected" ]] &&
+             [[ "$base" == "$upstream" ]]; then
+            echo "patched already tracks current nixos-unstable"
+            exit 0
+          fi
+
+          if [[ "$local_tip" == "$base" ]]; then
+            rebased_tip="$upstream"
+
+          elif [[ "$base" == "$upstream" ]]; then
+            rebased_tip="$local_tip"
+
+          else
+            echo "Checking local patches against nixos-unstable"
+
+            git rev-list \
+              --reverse \
+              --topo-order \
+              --cherry-pick \
+              --right-only \
+              "$upstream...$local_tip" \
+              > "$tmp/local-commits"
+
+            local_count="$(
+              wc -l < "$tmp/local-commits"
+            )"
+
+            echo "Replaying ${local_count} local commit(s) not already in nixos-unstable"
+
+            rebased_tip="$upstream"
+
+            git update-ref \
+              refs/heads/rebased \
+              "$rebased_tip"
+
+            while read -r commit; do
+              echo "Replaying ${commit}"
+
+              if ! git replay \
+                --onto="$rebased_tip" \
+                --ref=refs/heads/rebased \
+                "$commit^..$commit"
+              then
+                echo "::error::commit ${commit} conflicts with current nixos-unstable"
+                exit 1
+              fi
+
+              rebased_tip="$(
+                git rev-parse refs/heads/rebased
+              )"
+            done < "$tmp/local-commits"
+          fi
+
+          workflow_blob="$(
+            git hash-object \
+              -w \
+              "$tmp/rebase-upstream.yml"
+          )"
+
+          dependabot_blob="$(
+            git hash-object \
+              -w \
+              "$tmp/dependabot.yml"
+          )"
+
+          workflows_tree="$(
+            printf \
+              '100644 blob %s\trebase-upstream.yml\n' \
+              "$workflow_blob" |
+              git mktree
+          )"
+
+          github_tree="$(
+            {
+              git ls-tree "$rebased_tip:.github" |
+                awk -F '\t' \
+                  '$2 != "workflows" && $2 != "dependabot.yml"'
+
+              printf \
+                '040000 tree %s\tworkflows\n' \
+                "$workflows_tree"
+
+              printf \
+                '100644 blob %s\tdependabot.yml\n' \
+                "$dependabot_blob"
+            } |
+              git mktree --missing
+          )"
+
+          root_tree="$(
+            {
+              git ls-tree "$rebased_tip" |
+                awk -F '\t' \
+                  '$2 != ".github"'
+
+              printf \
+                '040000 tree %s\t.github\n' \
+                "$github_tree"
+            } |
+              git mktree --missing
+          )"
+
+          result="$(
+            printf '%s\n\n' \
+              'personal: configure fork workflows' |
+              git commit-tree \
+                "$root_tree" \
+                -p "$rebased_tip"
+          )"
+
+          git update-ref \
+            refs/heads/result \
+            "$result"
+
+          current="$(
+            git ls-remote \
+              origin \
+              refs/heads/patched |
+              awk '{print $1}'
+          )"
+
+          if [[ "$current" != "$expected" ]]; then
+            echo "::error::patched changed while this workflow was running"
+            exit 1
+          fi
+
+          git push \
+            --quiet \
+            --force-with-lease="refs/heads/patched:${expected}" \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            refs/heads/result:refs/heads/patched
+
+          echo "patched updated; local commits preserved"
+
+      - name: Open or update failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.rebase-bot.outputs.token || github.token }}
+          ISSUE_TITLE: Scheduled rebase from upstream/nixos-unstable failed
+          RUN_URL: >-
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          body="$(
+            printf '%s\n' \
+              '@Moraxyc The scheduled rebase of `patched` onto `NixOS/nixpkgs:nixos-unstable` failed.' \
+              '' \
+              "Inspect the run: ${RUN_URL}"
+          )"
+
+          issue_number="$(
+            gh issue list \
+              --repo "$GITHUB_REPOSITORY" \
+              --state open \
+              --search "$ISSUE_TITLE in:title" \
+              --limit 100 \
+              --json number,title \
+              --jq \
+                '[.[] | select(.title == env.ISSUE_TITLE)][0].number // empty'
+          )"
+
+          if [[ -n "$issue_number" ]]; then
+            gh issue comment \
+              "$issue_number" \
+              --repo "$GITHUB_REPOSITORY" \
+              --body "$body"
+          else
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$ISSUE_TITLE" \
+              --body "$body"
+          fi

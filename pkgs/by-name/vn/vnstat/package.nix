@@ -8,6 +8,8 @@
   sqlite,
   check,
   nixosTests,
+
+  withImageOutput ? true,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -31,11 +33,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [ pkg-config ];
 
+  configureFlags = lib.optional (!withImageOutput) "--disable-image-output";
+
   buildInputs = [
-    gd
     ncurses
     sqlite
-  ];
+  ]
+  ++ lib.optional withImageOutput gd;
 
   checkInputs = [ check ];
 

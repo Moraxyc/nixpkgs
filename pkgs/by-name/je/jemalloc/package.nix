@@ -76,12 +76,16 @@ stdenv.mkDerivation (finalAttrs: {
   configureFlags = [
     "--with-version=${finalAttrs.version}-0-g0000000000000000000000000000000000000000"
     "--with-lg-vaddr=${with stdenv.hostPlatform; toString (if isILP32 then 32 else parsed.cpu.bits)}"
-    # Profiling is inert unless enabled at runtime
-    "--enable-prof"
   ]
+  # Profiling is inert unless enabled at runtime, but on musl (without glibc
+  # backtrace) libgcc unwinding deadlocks under prof:true during C++ exception
+  # handling (e.g. test/integration/cpp/failing_new).
+  ++ lib.optional (!stdenv.hostPlatform.isMusl) "--enable-prof"
   # see the comment on stripPrefix
   ++ lib.optional stripPrefix "--with-jemalloc-prefix="
   ++ lib.optional disableInitExecTls "--disable-initial-exec-tls"
+  # musl's sbrk() is a stub that always returns ENOMEM for non-zero increments
+  ++ lib.optional stdenv.hostPlatform.isMusl "--disable-dss"
   # The upstream default is dependent on the builders' page size
   # https://github.com/jemalloc/jemalloc/issues/467
   # https://sources.debian.org/src/jemalloc/5.3.0-3/debian/rules/

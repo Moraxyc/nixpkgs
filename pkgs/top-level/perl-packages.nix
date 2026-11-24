@@ -18566,12 +18566,12 @@ with self;
       url = "mirror://cpan/authors/id/I/IS/ISHIGAKI/JSON-4.10.tar.gz";
       hash = "sha256-34tRQ9mn3pnEe1XxoXC9H2n3EZNcGGptwKtW3QV1jjU=";
     };
-    # Force core provided JSON::PP backend when cross building since dynamic
-    # loading attempts of other backends presumably fail
+    # Force core provided JSON::PP backend by default when cross building since
+    # dynamic loading attempts of other backends presumably fail
     preConfigure = lib.optionalString (stdenv.buildPlatform != stdenv.hostPlatform) ''
       substituteInPlace lib/JSON.pm \
         --replace-fail 'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : 1;' \
-                       'my $backend = "JSON::PP";'
+                       'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : "JSON::PP";'
     '';
     buildInputs = [ TestPod ];
     meta = {

@@ -45,6 +45,13 @@ buildPythonPackage (finalAttrs: {
     "tests/test_read_write.py"
   ];
 
+  disabledTests = lib.optionals stdenv.hostPlatform.isLinux [
+    # Creates a claim file after the claim directory fd is opened and expects
+    # scandir(dir_fd) to observe it; POSIX leaves visibility unspecified and
+    # Linux 6.6+ tmpfs omits entries added after opendir().
+    "test_strict_soft_doorway_preserves_every_claim_cleanup_error"
+  ];
+
   doCheck = !stdenv.hostPlatform.isFreeBSD;
 
   meta = {

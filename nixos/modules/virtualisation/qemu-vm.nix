@@ -391,7 +391,8 @@ let
   # System image is akin to a complete NixOS install with
   # a boot partition and root partition.
   systemImage = import ../../lib/make-disk-image.nix {
-    inherit pkgs config lib;
+    pkgs = if hostPkgs.stdenv.hostPlatform.isLinux then hostPkgs else pkgs.buildPackages;
+    inherit config lib;
     additionalPaths = [ regInfo ];
     format = "qcow2";
     onlyNixStore = false;

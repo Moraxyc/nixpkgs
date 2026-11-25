@@ -32,6 +32,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     edition.workspace = true
     publish = false
     EOF
+  ''
+  # Upstream's .cargo/config.toml forces +crt-static on all musl targets, which
+  # fails when linking against dynamically built system libraries such as zstd.
+  + lib.optionalString (stdenv.hostPlatform.isMusl && !stdenv.hostPlatform.isStatic) ''
+    substituteInPlace .cargo/config.toml \
+      --replace-fail '"-C", "target-feature=+crt-static", ' ""
   '';
 
   cargoHash = "sha256-g9nr7TM7VSXnfewSJ6LGTeLmsgKwey/TcWE/hQOHSIA=";

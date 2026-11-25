@@ -137,7 +137,8 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://github.com/bus1/dbus-broker/commit/aaa9fd6bbc2d5d7bfeca039f9c457b7f88a50dde.patch";
       hash = "sha256-f0p5oDw/6Wxe26fcqfKua766ylMg5NydywFM3MZYV8I=";
     })
-  ];
+  ]
+  ++ lib.optional stdenv.hostPlatform.isMusl ./musl-sockaddr-cast.patch;
 
   nativeBuildInputs = [
     docutils

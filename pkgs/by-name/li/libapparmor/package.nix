@@ -1,6 +1,7 @@
 {
   stdenv,
   lib,
+  buildPackages,
   fetchFromGitLab,
   fetchpatch,
   autoreconfHook,
@@ -14,10 +15,7 @@
   perl,
   withPython ?
     # static can't load python libraries
-    !stdenv.hostPlatform.isStatic
-    && lib.meta.availableOn stdenv.hostPlatform python3Packages.python
-    # m4 python include script runs build-platform python3-config and fails when cross-compiling
-    && stdenv.hostPlatform == stdenv.buildPlatform,
+    !stdenv.hostPlatform.isStatic && lib.meta.availableOn stdenv.hostPlatform python3Packages.python,
   python3Packages,
   swig,
   ncurses,
@@ -95,6 +93,16 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.withFeature withPerl "perl")
     (lib.withFeature withPython "python")
   ];
+
+  env = lib.optionalAttrs (withPython && stdenv.hostPlatform != stdenv.buildPlatform) {
+    # m4/ac_python_devel.m4 falls back to build-platform python3-config in PATH
+    # when no prefixed <host>-python3-config exists. Wrap host's python3-config
+    # with build bash so it runs even when host binaries are non-executable
+    # while returning host include and library flags.
+    PYTHON_CONFIG = buildPackages.writeShellScript "python3-config" ''
+      exec ${lib.getExe buildPackages.bashNonInteractive} ${lib.getBin python3Packages.python}/bin/python3-config "$@"
+    '';
+  };
 
   doCheck = withPerl && withPython;
 

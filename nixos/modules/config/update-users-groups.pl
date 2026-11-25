@@ -30,10 +30,6 @@ sub dateToDays {
     return $time->epoch / 60 / 60 / 24;
 }
 
-sub nscdInvalidate {
-    system("nscd", "--invalidate", $_[0]) unless $is_dry;
-}
-
 sub hashPassword {
     my ($password) = @_;
     my $salt = "";
@@ -93,6 +89,10 @@ sub allocUid {
 
 # Read the declared users/groups
 my $spec = decode_json(read_file($ARGV[0]));
+
+sub nscdInvalidate {
+    system($spec->{nscd}, "--invalidate", $_[0]) if defined $spec->{nscd} && !$is_dry;
+}
 
 # Don't allocate UIDs/GIDs that are manually assigned.
 foreach my $g (@{$spec->{groups}}) {

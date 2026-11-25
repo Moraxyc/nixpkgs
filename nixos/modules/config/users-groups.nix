@@ -633,6 +633,12 @@ let
   spec = pkgs.writeText "users-groups.json" (
     builtins.toJSON {
       inherit (cfg) mutableUsers;
+      # nsncd has no cache, so only glibc nscd needs invalidation.
+      nscd =
+        if config.services.nscd.enable && !config.services.nscd.enableNsncd then
+          lib.getExe' config.services.nscd.package "nscd"
+        else
+          null;
       users = mapAttrsToList (_: u: {
         inherit (u)
           name

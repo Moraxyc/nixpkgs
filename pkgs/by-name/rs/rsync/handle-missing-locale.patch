@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Moraxyc <i@qaq.li>
+Date: Wed, 25 Nov 2026 00:00:00 +0800
+Subject: [PATCH] testsuite/output-control-chars: handle missing locale command
+
+Return an empty locale map when the `locale` executable is not available
+(e.g. on musl systems without glibc's `locale` utility) instead of raising
+FileNotFoundError.
+---
+ testsuite/output-control-chars_test.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/testsuite/output-control-chars_test.py b/testsuite/output-control-chars_test.py
+index 1111111..2222222 100755
+--- a/testsuite/output-control-chars_test.py
++++ b/testsuite/output-control-chars_test.py
+@@ -6,8 +6,11 @@ from rsyncfns import SCRATCHDIR, rmtree, rsync_argv, test_fail
+ 
+ 
+ def available_locales():
+-    proc = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE,
+-                          stderr=subprocess.DEVNULL)
++    try:
++        proc = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE,
++                              stderr=subprocess.DEVNULL)
++    except FileNotFoundError:
++        return {}
+     if proc.returncode != 0:
+         return {}
+     return {name.lower(): name for name in proc.stdout.decode('ascii', 'ignore').splitlines()}
+-- 
+2.49.0

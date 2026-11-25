@@ -39,7 +39,9 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-oQ1ZGCUlHgcPdMmN89qtGV3vTtgbSi3hYWkCauoz9sg=";
   };
 
-  patches = [ ];
+  patches = [
+    ./handle-missing-locale.patch
+  ];
 
   preBuild = ''
     patchShebangs ./runtests.py ./support/rrsync

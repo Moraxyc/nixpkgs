@@ -16,8 +16,8 @@
     # static can't load python libraries
     !stdenv.hostPlatform.isStatic
     && lib.meta.availableOn stdenv.hostPlatform python3Packages.python
-    # m4 python include script fails if cpu bit depth is different across machines
-    && stdenv.hostPlatform.parsed.cpu.bits == stdenv.buildPlatform.parsed.cpu.bits,
+    # m4 python include script runs build-platform python3-config and fails when cross-compiling
+    && stdenv.hostPlatform == stdenv.buildPlatform,
   python3Packages,
   swig,
   ncurses,
@@ -77,7 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
     python3Packages.setuptools
   ];
 
-  nativeCheckInputs = [
+  nativeCheckInputs = lib.optionals withPython [
     python3Packages.pythonImportsCheckHook
   ];
 

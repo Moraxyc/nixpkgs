@@ -22,6 +22,10 @@ buildPythonPackage rec {
     hash = "sha256-8p4m4iM/z4o6PHRQIpuSXb64tPTWGlujEYCDVLiIt2o=";
   };
 
+  patches = [
+    ./musl-strndupa.patch
+  ];
+
   build-system = [ setuptools ];
 
   nativeBuildInputs = [ pkg-config ];

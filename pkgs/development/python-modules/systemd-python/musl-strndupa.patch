@@ -1,0 +1,34 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] util.c: define strndupa fallback for non-glibc libcs
+
+strndupa() is a glibc extension not provided by musl. Provide a
+standard alloca-based fallback when strndupa is not defined.
+
+--- a/systemd/util.c
++++ b/systemd/util.c
+@@ -23,6 +23,7 @@
+ #  define _GNU_SOURCE
+ #endif
+ 
++#include <alloca.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
+@@ -33,6 +34,17 @@
+ #include <unistd.h>
+ #include <net/if.h>
+ 
++#ifndef strndupa
++#define strndupa(s, n) \
++        ({ \
++                const char *__old = (s); \
++                size_t __len = strnlen(__old, (n)); \
++                char *__new = (char *)alloca(__len + 1); \
++                __new[__len] = '\0'; \
++                (char *)memcpy(__new, __old, __len); \
++        })
++#endif
++
+ #include "util.h"
+ 
+ int safe_atou(const char *s, unsigned *ret_u) {

@@ -124,8 +124,9 @@ let
 
         patches = [
           ./patch/cmake-includedir.patch
-          # patch for musl compatibility
+          # patches for musl compatibility
           ./patch/include-cstdint-full.patch
+          ./patch/rocksdb-musl-stdint.patch
         ]
         # Fixes a build issue as documented on
         # https://jira.mariadb.org/browse/MDEV-26769?focusedCommentId=206073&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-206073

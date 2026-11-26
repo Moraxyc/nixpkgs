@@ -1,0 +1,63 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] musl: fix missing <cstdint> includes and RocksDB uint*_t redefines
+
+1. storage/rocksdb/CMakeLists.txt globally redefines uint{8,16,32,64}_t to
+   BSD u_int{8,16,32,64}_t via ADD_DEFINITIONS(). On musl, u_int*_t is not
+   defined by <cstdint>/<stdint.h>.
+2. Several vendored RocksDB and wsrep-lib headers use (u)int{32,64}_t
+   without including <cstdint>.
+
+--- a/storage/rocksdb/CMakeLists.txt
++++ b/storage/rocksdb/CMakeLists.txt
+@@ -38,11 +38,6 @@ IF(WITH_VALGRIND)
+   ADD_DEFINITIONS(-DROCKSDB_VALGRIND_RUN=1)
+ ENDIF()
+ 
+-ADD_DEFINITIONS(-Duint64_t=u_int64_t)
+-ADD_DEFINITIONS(-Duint32_t=u_int32_t)
+-ADD_DEFINITIONS(-Duint16_t=u_int16_t)
+-ADD_DEFINITIONS(-Duint8_t=u_int8_t)
+-
+ # We've had our builders hang during the build process. This prevents MariaRocks
+ # to be built on 32 bit intel OS kernels.
+ IF(CMAKE_SYSTEM_PROCESSOR MATCHES "i[36]86")
+--- a/storage/rocksdb/rocksdb/db/blob/blob_file_meta.h
++++ b/storage/rocksdb/rocksdb/db/blob/blob_file_meta.h
+@@ -6,6 +6,7 @@
+ #pragma once
+ 
+ #include <cassert>
++#include <cstdint>
+ #include <iosfwd>
+ #include <memory>
+ #include <string>
+--- a/storage/rocksdb/rocksdb/include/rocksdb/trace_record.h
++++ b/storage/rocksdb/rocksdb/include/rocksdb/trace_record.h
+@@ -5,6 +5,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+--- a/storage/rocksdb/rocksdb/include/rocksdb/utilities/transaction_db_mutex.h
++++ b/storage/rocksdb/rocksdb/include/rocksdb/utilities/transaction_db_mutex.h
+@@ -6,6 +6,7 @@
+ #pragma once
+ #ifndef ROCKSDB_LITE
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ #include "rocksdb/status.h"
+--- a/wsrep-lib/include/wsrep/provider_options.hpp
++++ b/wsrep-lib/include/wsrep/provider_options.hpp
+@@ -27,6 +27,7 @@
+ 
+ #include "provider.hpp"
+ 
++#include <cstdint>
+ #include <functional>
+ #include <map>
+ #include <memory>

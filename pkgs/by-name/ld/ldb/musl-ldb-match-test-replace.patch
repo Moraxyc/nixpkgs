@@ -1,0 +1,17 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] wscript: link ldb_match_test against replace
+
+On musl, libreplace provides rep_strtoull which ldb_match_test references.
+Add `replace` to ldb_match_test's deps so linking succeeds.
+
+--- a/wscript
++++ b/wscript
+@@ -499,7 +499,7 @@ def build(bld):
+ 
+         bld.SAMBA_BINARY('ldb_match_test',
+                          source='tests/ldb_match_test.c',
+-                         deps='cmocka ldb',
++                         deps='cmocka ldb replace',
+                          install=False)
+ 
+         bld.SAMBA_BINARY('ldb_key_value_test',

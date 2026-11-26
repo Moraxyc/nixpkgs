@@ -42,6 +42,7 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://gitlab.com/samba-team/samba/-/commit/04e0fb9b2d1d87516f1331096c78e8355b4fa9f3.patch";
       hash = "sha256-sBqtVwGBXseCAMlv3QaiSYQmOw7H4cAJwc0Ey5yD6Os=";
     })
+    ./musl-ldb-match-test-replace.patch
   ];
 
   nativeBuildInputs = [

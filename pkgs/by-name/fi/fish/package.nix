@@ -244,6 +244,14 @@ stdenv.mkDerivation (finalAttrs: {
     # This test seems to consistently fail on aarch64 and darwin
     rm tests/checks/cd.fish
   ''
+  + lib.optionalString stdenv.hostPlatform.isMusl ''
+    # musl has no `getconf` binary yet implements confstr(_CS_PATH) as "/bin:/usr/bin",
+    # whereas default-setup-path.fish assumes missing `getconf` implies the DEFAULT_PATH fallback.
+    substituteInPlace tests/checks/default-setup-path.fish \
+      --replace-fail \
+        'test "$PATH[2..]" = "/usr/bin:/bin"' \
+        'test "$PATH" = "/bin:/usr/bin"'
+  ''
   + ''
     substituteInPlace share/functions/grep.fish \
       --replace-fail "command grep" "command ${lib.getExe gnugrep}"

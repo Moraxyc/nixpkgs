@@ -18559,7 +18559,7 @@ with self;
     };
   };
 
-  JSON = buildPerlPackage {
+  JSON = buildPerlPackage rec {
     pname = "JSON";
     version = "4.10";
     src = fetchurl {
@@ -18567,12 +18567,22 @@ with self;
       hash = "sha256-34tRQ9mn3pnEe1XxoXC9H2n3EZNcGGptwKtW3QV1jjU=";
     };
     # Force core provided JSON::PP backend by default when cross building since
-    # dynamic loading attempts of other backends presumably fail
-    preConfigure = lib.optionalString (stdenv.buildPlatform != stdenv.hostPlatform) ''
-      substituteInPlace lib/JSON.pm \
-        --replace-fail 'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : 1;' \
-                       'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : "JSON::PP";'
-    '';
+    # dynamic loading attempts of other backends presumably fail. When running
+    # under miniperl (foreign cross builds without dynamic loading), skip the
+    # `require JSON` banner check in Makefile.PL which requires XS module B.
+    preConfigure =
+      lib.optionalString (!lib.systems.equals stdenv.buildPlatform stdenv.hostPlatform) ''
+        substituteInPlace lib/JSON.pm \
+          --replace-fail 'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : 1;' \
+                         'my $backend = exists $ENV{PERL_JSON_BACKEND} ? $ENV{PERL_JSON_BACKEND} : "JSON::PP";'
+      ''
+      + lib.optionalString (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+        substituteInPlace Makefile.PL \
+          --replace-fail "\$ENV{PERL_JSON_BACKEND} = 'JSON::backportPP';" "" \
+          --replace-fail 'eval q| require JSON |;' "" \
+          --replace-fail 'my $version     = JSON->VERSION;' 'my $version = "${version}";' \
+          --replace-fail 'JSON->require_xs_version' "'2.34'"
+      '';
     buildInputs = [ TestPod ];
     meta = {
       description = "JSON (JavaScript Object Notation) encoder/decoder";

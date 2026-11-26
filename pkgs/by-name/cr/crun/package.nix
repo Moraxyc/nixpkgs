@@ -2,6 +2,7 @@
   stdenv,
   lib,
   fetchFromGitHub,
+  argp-standalone,
   autoreconfHook,
   go-md2man,
   pkg-config,
@@ -87,6 +88,9 @@ stdenv.mkDerivation (finalAttrs: {
     libseccomp
     systemdMinimal
   ]
+  ++ lib.optionals stdenv.hostPlatform.isMusl [
+    argp-standalone
+  ]
   ++ lib.optionals withLibkrun [
     libkrun
   ]
@@ -108,7 +112,13 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   configureFlags =
-    lib.optionals withLibkrun [
+    lib.optionals stdenv.hostPlatform.isMusl [
+      # musl always ships libc.a, causing configure to enable BUILD_STATIC_TESTS
+      # and run container integration PYTHON_TESTS that require /sys/fs/cgroup
+      # inside the Nix sandbox (glibc skips them because glibc.static is absent).
+      "lt_cv_prog_compiler_static_works=no"
+    ]
+    ++ lib.optionals withLibkrun [
       "--with-libkrun"
     ]
     ++ lib.optionals withWamr [

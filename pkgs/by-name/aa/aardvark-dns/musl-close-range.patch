@@ -1,0 +1,22 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] main: use SYS_close_range syscall on musl
+
+The Rust libc crate does not expose a close_range() wrapper function on
+Linux musl targets. Invoke Linux's SYS_close_range directly via
+libc::syscall() on target_env = "musl".
+
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -34,7 +34,12 @@ enum SubCommand {
+ 
+ fn main() {
+     // Close all fds we inherited from our parent process, we only need stdio.
++    #[cfg(not(target_env = "musl"))]
+     let _ = unsafe { libc::close_range(3, libc::c_uint::MAX, 0) };
++    #[cfg(target_env = "musl")]
++    let _ = unsafe {
++        libc::syscall(libc::SYS_close_range, 3 as libc::c_uint, libc::c_uint::MAX, 0 as libc::c_uint)
++    };
+ 
+     let formatter = Formatter3164 {
+         facility: Facility::LOG_USER,

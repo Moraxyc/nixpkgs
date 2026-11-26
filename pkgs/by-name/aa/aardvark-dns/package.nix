@@ -16,6 +16,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-EQFTkJQaW4f6AFmMP5h24ugK5st1rg9c/QK3WjBORAQ=";
   };
 
+  patches = [
+    ./musl-close-range.patch
+  ];
+
   cargoHash = "sha256-nTcAuhfez2ub+4z9E2YGp5i+JJr9K/PpG22ZvMW5ni4=";
 
   passthru.tests = { inherit (nixosTests) podman; };

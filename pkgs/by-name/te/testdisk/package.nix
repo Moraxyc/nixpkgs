@@ -28,6 +28,10 @@ stdenv.mkDerivation rec {
     hash = "sha256-+DQ74gy0ABxdkaLjvNkYOY8Arm2DEIlKWp8v64E8KD8=";
   };
 
+  patches = [
+    ./musl-libgen.patch
+  ];
+
   postPatch = ''
     substituteInPlace linux/qphotorec.desktop \
       --replace "/usr" "$out"

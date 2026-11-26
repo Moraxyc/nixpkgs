@@ -1,0 +1,15 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] hdaccess.c: include <libgen.h> for basename() on musl
+
+musl declares basename() only in <libgen.h>, not in <string.h>.
+
+--- a/src/hdaccess.c
++++ b/src/hdaccess.c
+@@ -42,6 +42,7 @@
+ #ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
+ #endif
++#include <libgen.h>
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif

@@ -72,7 +72,10 @@ stdenv.mkDerivation (finalAttrs: {
     rustc
   ];
 
-  patches = lib.optionals stdenv.hostPlatform.isRiscV64 [
+  patches = [
+    ./musl-statx.patch
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isRiscV64 [
     # https://github.com/libkrun/libkrun/commit/d4bb6e0
     # Fix riscv64 non-TEE memory region setup
     # Remove in next release (Not included in 1.19.4)
@@ -82,6 +85,8 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     libcap_ng
     libkrunfw'
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isGnu [
     glibc
     glibc.static
   ]

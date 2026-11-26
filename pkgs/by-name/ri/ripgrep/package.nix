@@ -29,6 +29,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     hash = "sha256-BsSIbZwB6s8i3dDTRYJ1EdVbJmiO0oxcLu6qiYlPkOI=";
   };
 
+  # Upstream .cargo/config.toml forces +crt-static and link-self-contained=yes
+  # on x86_64-unknown-linux-musl, which produces a static-PIE binary without
+  # PT_INTERP even when dynamically linked against libjemalloc.so.
+  postPatch = lib.optionalString (stdenv.hostPlatform.isMusl && !stdenv.hostPlatform.isStatic) ''
+    rm -f .cargo/config.toml
+  '';
+
   cargoHash = "sha256-AqizStE9ICd6mNDZWdeXg6dHuTiY+B0TNauQQYWUa84=";
 
   nativeBuildInputs = [
@@ -37,7 +44,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ]
   ++ lib.optional withPCRE2 pkg-config;
   buildInputs =
-    lib.optional withPCRE2 pcre2 ++ lib.optional stdenv.hostPlatform.isStatic rust-jemalloc-sys;
+    lib.optional withPCRE2 pcre2
+    ++ lib.optional (stdenv.hostPlatform.isStatic || stdenv.hostPlatform.isMusl) rust-jemalloc-sys;
 
   buildFeatures = lib.optional withPCRE2 "pcre2";
 

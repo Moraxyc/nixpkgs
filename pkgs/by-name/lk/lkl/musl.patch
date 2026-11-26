@@ -1,0 +1,93 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] tools/lkl: fix musl libc compatibility
+
+- Include <sys/types.h> in tools/lkl/include/lkl.h for mode_t/dev_t and in
+  tools/lkl/tests/net-test.c for u_short.
+- Include <limits.h> in tools/lkl/fs2tar.c and tools/lkl/cptofs.c for PATH_MAX.
+- Match musl's `int ioctl(int, int, ...)` prototype in hijack.c.
+- Use standard `pid_t gettid(void)` instead of glibc `__pid_t`/`__THROW` in
+  zpoline.c.
+- Gate tools/lkl/tests/test-dlmopen.c on __GLIBC__ since musl does not
+  provide dlmopen()/LM_ID_NEWLM.
+
+diff -ruN a/tools/lkl/cptofs.c b/tools/lkl/cptofs.c
+--- a/tools/lkl/cptofs.c	2026-11-27 01:22:09.836198492 +0800
++++ b/tools/lkl/cptofs.c	2026-11-27 01:22:09.848955603 +0800
+@@ -5,6 +5,7 @@
+ #include <stdio.h>
+ #include <time.h>
+ #include <argp.h>
++#include <limits.h>
+ #include <unistd.h>
+ #include <string.h>
+ #include <stdlib.h>
+diff -ruN a/tools/lkl/fs2tar.c b/tools/lkl/fs2tar.c
+--- a/tools/lkl/fs2tar.c	2026-11-27 01:22:09.831454983 +0800
++++ b/tools/lkl/fs2tar.c	2026-11-27 01:22:09.848928312 +0800
+@@ -5,6 +5,7 @@
+ #include <stdio.h>
+ #include <time.h>
+ #include <argp.h>
++#include <limits.h>
+ #include <unistd.h>
+ #include <string.h>
+ #include <stdlib.h>
+diff -ruN a/tools/lkl/include/lkl.h b/tools/lkl/include/lkl.h
+--- a/tools/lkl/include/lkl.h	2026-11-27 01:22:09.806896711 +0800
++++ b/tools/lkl/include/lkl.h	2026-11-27 01:22:09.848298242 +0800
+@@ -2,6 +2,7 @@
+ #define _LKL_H
+ 
+ #include "lkl_autoconf.h"
++#include <sys/types.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -ruN a/tools/lkl/lib/hijack/hijack.c b/tools/lkl/lib/hijack/hijack.c
+--- a/tools/lkl/lib/hijack/hijack.c	2026-11-27 01:22:09.811756381 +0800
++++ b/tools/lkl/lib/hijack/hijack.c	2026-11-27 01:22:09.848838909 +0800
+@@ -202,7 +202,7 @@
+ }
+ 
+ HOST_CALL(ioctl);
+-#ifdef __ANDROID__
++#if defined(__ANDROID__) || !defined(__GLIBC__)
+ int ioctl(int fd, int req, ...)
+ #else
+ int ioctl(int fd, unsigned long req, ...)
+diff -ruN a/tools/lkl/lib/hijack/zpoline.c b/tools/lkl/lib/hijack/zpoline.c
+--- a/tools/lkl/lib/hijack/zpoline.c	2026-11-27 01:22:09.816599840 +0800
++++ b/tools/lkl/lib/hijack/zpoline.c	2026-11-27 01:22:09.848863105 +0800
+@@ -32,7 +32,7 @@
+ #include <errno.h>
+ 
+ /* XXX: include <unistd.h> doesn't do the job.. */
+-extern __pid_t gettid(void) __THROW;
++extern pid_t gettid(void);
+ 
+ #define CALL_LKL_FD_SYSCALL(x)					\
+ {								\
+diff -ruN a/tools/lkl/tests/net-test.c b/tools/lkl/tests/net-test.c
+--- a/tools/lkl/tests/net-test.c	2026-11-27 01:22:09.821154216 +0800
++++ b/tools/lkl/tests/net-test.c	2026-11-27 01:22:09.848885370 +0800
+@@ -2,7 +2,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ #include <errno.h>
+-#ifdef __FreeBSD__
++#if defined(__FreeBSD__) || !defined(__GLIBC__)
+ #include <sys/types.h>
+ #endif
+ #ifdef __MINGW32__
+diff -ruN a/tools/lkl/tests/test-dlmopen.c b/tools/lkl/tests/test-dlmopen.c
+--- a/tools/lkl/tests/test-dlmopen.c	2026-11-27 01:22:09.826427371 +0800
++++ b/tools/lkl/tests/test-dlmopen.c	2026-11-27 01:22:09.848906106 +0800
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ /* if dlemopen is not implemented, skip test */
+-#if defined(__x86_64__) && defined(__linux__)
++#if defined(__x86_64__) && defined(__linux__) && defined(__GLIBC__)
+ #define _GNU_SOURCE
+ #include <string.h>
+ #include <stdlib.h>

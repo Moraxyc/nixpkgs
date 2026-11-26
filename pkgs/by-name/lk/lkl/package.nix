@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  argp-standalone,
   bc,
   python3,
   bison,
@@ -31,6 +32,10 @@ stdenv.mkDerivation {
     hash = "sha256-7S1lA6qfpGLj5lCqdOEEfcChxNw+35SC/NEjFWcwvko=";
   };
 
+  patches = [
+    ./musl.patch
+  ];
+
   nativeBuildInputs = [
     bc
     bison
@@ -41,7 +46,8 @@ stdenv.mkDerivation {
   buildInputs = [
     fuse3
     libarchive
-  ];
+  ]
+  ++ lib.optional stdenv.hostPlatform.isMusl argp-standalone;
 
   postPatch = ''
     # Fix a /usr/bin/env reference in here that breaks sandboxed builds
@@ -99,7 +105,8 @@ stdenv.mkDerivation {
     "CC=${stdenv.cc}/bin/${stdenv.cc.targetPrefix}cc"
     "HOSTCC=${buildPackages.stdenv.cc}/bin/${buildPackages.stdenv.cc.targetPrefix}cc"
     "CROSS_COMPILE=${stdenv.cc.targetPrefix}"
-  ];
+  ]
+  ++ lib.optional stdenv.hostPlatform.isMusl "LKL_HOST_CONFIG_NEEDS_LARGP=y";
 
   enableParallelBuilding = true;
 

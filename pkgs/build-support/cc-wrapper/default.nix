@@ -684,6 +684,26 @@ stdenvNoCC.mkDerivation {
       fi
     ''
 
+    # When hostPlatform != targetPlatform (e.g. dynamic -> static musl) yet both
+    # share the same config triple, bintools-wrapper installs prefixed binaries
+    # (${targetPrefix}ld, ${targetPrefix}as) while GCC's driver/collect2 looks
+    # for unprefixed tool names because host == target in GCC's configure.
+    # Expose unprefixed symlinks in a private directory passed via -B so GCC
+    # finds the wrapped target bintools without shadowing $PATH.
+    +
+      optionalString
+        (isGNU && targetPlatform != hostPlatform && targetPlatform.config == hostPlatform.config)
+        ''
+          mkdir -p "$out/libexec/bintools"
+          for tool in "$bintools/bin/${targetPrefix}"*; do
+            if [ -e "$tool" ]; then
+              toolName="$(basename "$tool")"
+              ln -s "$tool" "$out/libexec/bintools/''${toolName#${targetPrefix}}"
+            fi
+          done
+          echo "-B$out/libexec/bintools" >> $out/nix-support/cc-cflags
+        ''
+
     ##
     ## GCC libs for non-GCC support
     ##

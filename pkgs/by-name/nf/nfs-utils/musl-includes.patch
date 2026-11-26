@@ -1,0 +1,15 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] nfsdctl: include <libgen.h> for basename() on musl
+
+musl declares POSIX basename() only in <libgen.h>, not in <string.h>.
+
+--- a/utils/nfsdctl/nfsdctl.c
++++ b/utils/nfsdctl/nfsdctl.c
+@@ -20,6 +20,7 @@
+ #include <sched.h>
+ #include <sys/queue.h>
+ #include <limits.h>
++#include <libgen.h>
+ 
+ #include <netlink/genl/family.h>
+ #include <netlink/genl/ctrl.h>

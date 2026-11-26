@@ -120,14 +120,7 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://raw.githubusercontent.com/alpinelinux/aports/cb880042d48d77af412d4688f24b8310ae44f55f/main/nfs-utils/musl-getservbyport.patch";
       sha256 = "1fqws9dz8n1d9a418c54r11y3w330qgy2652dpwcy96cm44sqyhf";
     })
-    (fetchpatch {
-      url = "https://github.com/void-linux/void-packages/raw/31f0d5fef2f74999212bcfa6f982969973432750/srcpkgs/nfs-utils/patches/musl-includes.patch";
-      hash = "sha256-dZEafrXDZH/IPo1u7B65u01nwFMfcqSMnVyHAapexa8=";
-    })
-    (fetchpatch {
-      url = "https://github.com/void-linux/void-packages/raw/31f0d5fef2f74999212bcfa6f982969973432750/srcpkgs/nfs-utils/patches/musl-fix_long_unsigned_int.patch";
-      hash = "sha256-wcQ2IRmlBP61qZVlXk6osi4UH8ETtjllVogPEaZNK9o=";
-    })
+    ./musl-includes.patch
   ];
 
   postPatch = ''

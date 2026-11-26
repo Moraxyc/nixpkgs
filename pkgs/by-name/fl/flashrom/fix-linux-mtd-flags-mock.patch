@@ -1,0 +1,23 @@
+From: Moraxyc <i@qaq.li>
+Subject: [PATCH] tests/linux_mtd.c: mock sysfs flags as "0x0" instead of empty string
+
+read_sysfs_int() parses /sys/class/mtd/mtd0/flags with strtoul(buf, &endptr, 0)
+and fails if errno is non-zero. POSIX permits strtoul() to set errno = EINVAL
+when no conversion can be performed (as musl does for an empty string ""),
+whereas Linux's mtd_flags_show() always emits a hexadecimal integer (0x%lx).
+
+Mock /sys/class/mtd/mtd0/flags as "0x0" instead of "" so
+linux_mtd_probe_lifecycle_test_success passes on POSIX-compliant libc
+implementations such as musl.
+
+--- a/tests/linux_mtd.c
++++ b/tests/linux_mtd.c
+@@ -33,7 +33,7 @@ static size_t linux_mtd_fread(void *state, void *buf, size_t size, size_t len, F
+ 	const struct linux_mtd_fread_mock_entry fread_mock_map[] = {
+ 		{ "/sys/class/mtd/mtd0/type",            "nor"    },
+ 		{ "/sys/class/mtd/mtd0/name",            "Device" },
+-		{ "/sys/class/mtd/mtd0/flags",           ""       },
++		{ "/sys/class/mtd/mtd0/flags",           "0x0"    },
+ 		{ "/sys/class/mtd/mtd0/size",            "1024"   },
+ 		{ "/sys/class/mtd/mtd0/erasesize",       "512"    },
+ 		{ "/sys/class/mtd/mtd0/numeraseregions", "0"      },

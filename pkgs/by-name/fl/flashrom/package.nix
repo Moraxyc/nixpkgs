@@ -26,6 +26,11 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-ZUycYXRcJQzTtczQ5W/EPudpgPkqXgeEIEIGOdZpdaI=";
   };
 
+  patches = [
+    ./fix-setup-bad-chip-lifetime.patch
+    ./fix-linux-mtd-flags-mock.patch
+  ];
+
   outputs = [
     "out"
     "doc"

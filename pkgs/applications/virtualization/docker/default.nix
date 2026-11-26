@@ -128,7 +128,7 @@ let
         # Do not remove static from make files as we want a static binary
         postPatch = "";
 
-        buildInputs = [
+        buildInputs = lib.optionals stdenv.hostPlatform.isGnu [
           glibc
           glibc.static
         ];
@@ -307,7 +307,7 @@ let
 
         buildInputs =
           plugins
-          ++ lib.optionals (stdenv.hostPlatform.isLinux) [
+          ++ lib.optionals (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isGnu) [
             glibc
             glibc.static
           ];

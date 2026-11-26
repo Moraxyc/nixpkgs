@@ -33,9 +33,11 @@ stdenv.mkDerivation (finalAttrs: {
     sed -es"|/etc/netconfig|$out/etc/netconfig|g" -i doc/Makefile.in tirpc/netconfig.h
   '';
 
-  configureFlags = lib.optional (
-    stdenv.cc.bintools.isLLVM && lib.versionAtLeast stdenv.cc.bintools.version "17"
-  ) "LDFLAGS=-Wl,--undefined-version";
+  configureFlags =
+    lib.optional (
+      stdenv.cc.bintools.isLLVM && lib.versionAtLeast stdenv.cc.bintools.version "17"
+    ) "LDFLAGS=-Wl,--undefined-version"
+    ++ lib.optional stdenv.hostPlatform.isMusl "--enable-rpcdb";
 
   enableParallelBuilding = true;
 

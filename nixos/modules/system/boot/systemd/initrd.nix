@@ -111,8 +111,8 @@ let
     "systemd-sysctl.service"
     "timers.target"
     "umount.target"
-    "systemd-bsod.service"
   ]
+  ++ lib.optional cfg.package.withQrencode "systemd-bsod.service"
   ++ cfg.additionalUpstreamUnits;
 
   upstreamWants = [
@@ -611,7 +611,6 @@ in
         "${cfg.package}/lib/systemd/systemd-shutdown"
         "${cfg.package}/lib/systemd/systemd-sulogin-shell"
         "${cfg.package}/lib/systemd/systemd-sysctl"
-        "${cfg.package}/lib/systemd/systemd-bsod"
         "${cfg.package}/lib/systemd/systemd-sysroot-fstab-check"
         "${cfg.package}/lib/systemd/systemd-factory-reset"
         "${cfg.package}/bin/systemd-dissect"
@@ -634,6 +633,7 @@ in
         # Find the etc paths
         "${config.system.nixos-init.package}/bin/find-etc"
       ]
+      ++ lib.optional cfg.package.withQrencode "${cfg.package}/lib/systemd/systemd-bsod"
       ++ lib.optionals config.system.nixos-init.enable [
         "${config.system.nixos-init.package}/bin/initrd-init"
       ]

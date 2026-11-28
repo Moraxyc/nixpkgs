@@ -20,7 +20,8 @@ in
 
   options.systemd.oomd = {
     enable = lib.mkEnableOption "the `systemd-oomd` OOM killer" // {
-      default = true;
+      default = config.systemd.package.withOomd;
+      defaultText = lib.literalExpression "config.systemd.package.withOomd";
     };
 
     # Fedora enables the first and third option by default. See the 10-oomd-* files here:

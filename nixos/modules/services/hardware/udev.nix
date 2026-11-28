@@ -178,6 +178,7 @@ let
         packages = lib.unique (map toString ([ udev ] ++ cfg.packages));
       }
       ''
+        shopt -s nullglob
         mkdir -p etc/udev/hwdb.d
         for i in $packages; do
           echo "Adding hwdb files for package $i"
@@ -505,6 +506,8 @@ in
         binPackages = cfg.packages;
         inherit udevPath udev;
       };
+    }
+    // lib.optionalAttrs (udev.withHwdb || cfg.extraHwdb != "") {
       "udev/hwdb.bin".source = hwdbBin;
     }
     // lib.optionalAttrs config.boot.modprobeConfig.enable {

@@ -712,10 +712,12 @@ stdenv.mkDerivation (finalAttrs: {
 
     inherit
       withBootloader
+      withCoredump
       withCryptsetup
       withEfi
       withFido2
       withHostnamed
+      withHwdb
       withImportd
       withKmod
       withLocaled
@@ -726,7 +728,10 @@ stdenv.mkDerivation (finalAttrs: {
       withNsresourced
       withMountfsd
       withNspawn
+      withOomd
+      withQrencode
       withRepart
+      withResolved
       withPortabled
       withStorage
       withSysupdate

@@ -21,7 +21,8 @@ in
 
   options = {
     systemd.coredump.enable = lib.mkOption {
-      default = true;
+      default = config.systemd.package.withCoredump;
+      defaultText = lib.literalExpression "config.systemd.package.withCoredump";
       type = lib.types.bool;
       description = ''
         Whether core dumps should be processed by
